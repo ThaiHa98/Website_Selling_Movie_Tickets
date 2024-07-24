@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Website_Selling_Movie_Tickets.Domain.Entities;
+using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 
 namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
 {
@@ -40,6 +41,13 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
             modelBuilder.Entity<ChairType>()
                 .Property(x => x.Price)
                 .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.Roles)
+                .HasConversion(
+                 v => v.ToString(),
+                 v => (Roles)Enum.Parse(typeof(Roles), v)
+        );
         }
     }
 }

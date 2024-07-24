@@ -12,7 +12,7 @@ using Website_Selling_Movie_Tickets.Infrastructure.Persistence;
 namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20240724013537_Migrations")]
+    [Migration("20240724164207_Migrations")]
     partial class Migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -273,11 +273,13 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Phone")
-                        .HasColumnType("int");
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Roles")
-                        .HasColumnType("int");
+                    b.Property<string>("Roles")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

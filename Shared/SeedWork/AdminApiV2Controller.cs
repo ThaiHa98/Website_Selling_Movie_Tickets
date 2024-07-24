@@ -10,7 +10,6 @@ namespace Shared.SeedWork
 {
     [Route("api/v2/[controller]")]
     [ApiController]
-    [Authorize("Bearer")]
     public class AdminApiV2Controller : ControllerBase
     {
     }

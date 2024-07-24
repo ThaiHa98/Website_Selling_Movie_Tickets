@@ -31,8 +31,4 @@
     <ProjectReference Include="..\Website_Selling_Movie_Tickets.Infrastructure\Website_Selling_Movie_Tickets.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Identity\Authorization\" />
-  </ItemGroup>
-
 </Project>

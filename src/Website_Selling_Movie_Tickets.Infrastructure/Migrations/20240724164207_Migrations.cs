@@ -147,9 +147,9 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<int>(type: "int", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateofBirth = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Roles = table.Column<int>(type: "int", nullable: false),
+                    Roles = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Create = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

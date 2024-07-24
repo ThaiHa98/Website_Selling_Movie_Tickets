@@ -2,6 +2,7 @@ using HRM.API.Extensions;
 using HRM.Infrastructure;
 using Serilog;
 using Website_Selling_Movie_Tickets.API.Extensions;
+using Website_Selling_Movie_Tickets.API.Identity.Authorization;
 using Website_Selling_Movie_Tickets.Application;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.ConfigureSwagger();
     builder.Services.AddMemoryCache();
+    builder.Services.ConfigureAuthenticationHandler(builder.Configuration);
 
     var app = builder.Build();
 

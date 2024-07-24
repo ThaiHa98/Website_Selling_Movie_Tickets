@@ -1,6 +1,7 @@
 ﻿using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Shared.Middlewares;
+using TinTuc.Application.Helper;
 
 namespace HRM.API.Extensions
 {
@@ -11,7 +12,7 @@ namespace HRM.API.Extensions
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.OAuthClientId("api_hrm_swagger");
+                c.OAuthClientId("Website_Selling_Movie_Tickets_swagger");
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "HRM API");
                 c.DisplayRequestDuration();
             });
@@ -21,6 +22,8 @@ namespace HRM.API.Extensions
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseMiddleware<LastActivityMiddleware>();
 
             app.UseRouting();
 

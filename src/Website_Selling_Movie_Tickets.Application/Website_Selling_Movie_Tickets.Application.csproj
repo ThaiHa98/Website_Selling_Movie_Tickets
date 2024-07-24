@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="FluentValidation" Version="11.9.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
     <PackageReference Include="MediatR" Version="12.3.0" />
@@ -16,8 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Interfaces\" />
-    <Folder Include="Features\" />
+    <ProjectReference Include="..\..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\Website_Selling_Movie_Tickets.Domain\Website_Selling_Movie_Tickets.Domain.csproj" />
+    <ProjectReference Include="..\Website_Selling_Movie_Tickets.Infrastructure\Website_Selling_Movie_Tickets.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

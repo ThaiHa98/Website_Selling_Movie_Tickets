@@ -1,11 +1,15 @@
 ﻿using Common.Logging;
 using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Shared.Common;
 using Shared.Common.Interfaces;
 using Shared.Configurations;
 using Shared.Exceptions;
+using System.Text;
 namespace Website_Selling_Movie_Tickets.API.Extensions
 {
     public static class ServiceExtensions
@@ -79,6 +83,5 @@ namespace Website_Selling_Movie_Tickets.API.Extensions
                 });
             });
         }
-
     }
 }
