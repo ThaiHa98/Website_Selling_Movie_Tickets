@@ -12,7 +12,7 @@ using ILogger = Serilog.ILogger;
 
 namespace Website_Selling_Movie_Tickets.API.Controllers
 {
-    public class UserController : AdminApiV2Controller
+    public class UserController : ApiController
     {
         #region Fields
         private readonly IMediator _mediator;

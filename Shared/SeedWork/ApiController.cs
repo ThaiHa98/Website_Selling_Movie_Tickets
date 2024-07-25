@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Shared.SeedWork
 {
-    [Route("api/v2/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class AdminApiV2Controller : ControllerBase
+    public class ApiController : ControllerBase
     {
     }
 }
