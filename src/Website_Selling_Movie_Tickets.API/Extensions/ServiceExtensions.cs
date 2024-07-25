@@ -47,40 +47,6 @@ namespace Website_Selling_Movie_Tickets.API.Extensions
                 {
                     Title = "Website_Selling_Movie_Tickets API V1",
                 });
-                c.AddSecurityDefinition(IdentityServerAuthenticationDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
-                    {
-                        Implicit = new OpenApiOAuthFlow
-                        {
-                            Scopes = new Dictionary<string, string>
-                            {
-                                { "authenticationsso_microservices_api.read", "AuthenticationSSO Microservices API Read Scope" },
-                                { "authenticationsso_microservices_api.write", "AuthenticationSSO Microservices API Write Scope" }
-                            }
-                        }
-                    }
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = IdentityServerAuthenticationDefaults.AuthenticationScheme
-                            },
-                            Name = "Bearer"
-                        },
-                        new List<string>
-                        {
-                            "authenticationsso_microservices_api.read",
-                            "authenticationsso_microservices_api.write"
-                        }
-                    }
-                });
             });
         }
     }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Shared.Middlewares;
 using TinTuc.Application.Helper;
 
-namespace HRM.API.Extensions
+namespace Website_Selling_Movie_Tickets.API.Extensions
 {
     public static class ApplicationExtensions
     {
@@ -12,8 +12,7 @@ namespace HRM.API.Extensions
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.OAuthClientId("Website_Selling_Movie_Tickets_swagger");
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "HRM API");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Website_Selling_Movie_Tickets API");
                 c.DisplayRequestDuration();
             });
 
