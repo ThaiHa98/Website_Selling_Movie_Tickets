@@ -26,6 +26,8 @@ namespace Website_Selling_Movie_Tickets.Application
                     .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>))
                     .AddTransient<IUserRepository, UserRepository>()
                     .AddTransient<Token>()
-                    .AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+                    .AddTransient<IHttpContextAccessor, HttpContextAccessor>()
+                    .AddTransient<IGenreRepository, GenreRepository>();
+                    
     }
 }

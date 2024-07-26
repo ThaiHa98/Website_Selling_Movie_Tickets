@@ -16,6 +16,6 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<UserModel> AddAsync(UserModel entity);
         Task<User> GetByIdAsync(int id);
         Task RemoveAsync(int id);
-        Task UpdateAsync(User entity);
+        Task<User> UpdateAsync(User entity);
     }
 }

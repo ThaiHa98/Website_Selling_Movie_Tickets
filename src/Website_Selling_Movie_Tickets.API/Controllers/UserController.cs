@@ -1,13 +1,18 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.SeedWork;
 using System.Diagnostics.Metrics;
 using System.Net;
+using System.Security.Claims;
 using Website_Selling_Movie_Tickets.Application.Features.Users.Common.Create;
 using Website_Selling_Movie_Tickets.Application.Features.Users.Common.Login;
+using Website_Selling_Movie_Tickets.Application.Features.Users.Common.Logout;
+using Website_Selling_Movie_Tickets.Application.Features.Users.Common.Update;
 using Website_Selling_Movie_Tickets.Application.Features.Users.Queries.GetAll;
+using Website_Selling_Movie_Tickets.Application.Features.Users.Queries.GetById;
 using ILogger = Serilog.ILogger;
 
 namespace Website_Selling_Movie_Tickets.API.Controllers
@@ -20,12 +25,15 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         private static string Methods = "UserController";
         #endregion
 
-        #region Create
+        #region Ctor
         public UserController(IMediator mediator, ILogger logger)
         {
             _mediator = mediator;
             _logger = logger;
         }
+        #endregion
+
+        #region Create
         [HttpPost("Create")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
@@ -110,6 +118,113 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 });
             }
             catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region GetById
+        [HttpGet("GetById")]
+        public async Task<IActionResult> GetById(int Id)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} GetById");
+                var query = new GetByIdUserQuery
+                {
+                    Id = Id
+                };
+                var result = await _mediator.Send(query);
+                _logger.Information($"End GetById response:{JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.Id,
+                    message = "Successfully"
+                });
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region Logout
+        [Authorize]
+        [HttpPost("Logout")]
+        public async Task<IActionResult> LogoutUser()
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} LogoutUser");
+                //Lấy thông tin người dùng từ HttpContext
+                var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);    
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    _logger.Error("User not found or invalid user ID");
+                    return BadRequest(new ApiResultBase
+                    {
+                        success = false,
+                        httpStatusCode = (int)HttpStatusCode.BadRequest,
+                        message = "User not found or invalid user ID"
+                    });
+                }
+                // Gửi yêu cầu LogoutRequest tới MediatR
+                var response = await _mediator.Send(new LogoutRequest { Id = userId });
+
+                _logger.Information($"End LogoutUser response:{JsonConvert.SerializeObject(response)}");
+                return Ok(new ApiResultBase
+                {
+                    data = response,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    message = "Logout Successfully"
+                });
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region Update
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateUser([FromBody]UpdateUserRequest request)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} UpdateUser");
+                var result = await _mediator.Send(request);
+                _logger.Information($"End UpdateUser response : {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    message = "Update Successfully"
+                });
+            }
+            catch (Exception ex) 
             {
                 return BadRequest(new ApiResultBase
                 {

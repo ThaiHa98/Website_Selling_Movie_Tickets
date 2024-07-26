@@ -27,12 +27,25 @@ namespace Website_Selling_Movie_Tickets.API.Identity.Authorization
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Token256"]))
                 };
+                // Chấp nhận token từ Cookie
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Cookies["authenticationToken"];
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = "authenticationToken"; // Tên của cookie
+                options.Cookie.Name = "authenticationToken";
                 options.Cookie.HttpOnly = true;
-                options.LoginPath = "/account/login"; // Đường dẫn đến trang đăng nhập
+                options.LoginPath = "/account/login";
             });
         }
     }

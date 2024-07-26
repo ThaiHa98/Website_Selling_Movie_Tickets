@@ -70,15 +70,18 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(User entity)
+        public async Task<User> UpdateAsync(User entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Update(entity);
+            await _dbContext.SaveChangesAsync();
+            return entity;
         }
 
 
-        Task<User> IUserRepository.GetByIdAsync(int id)
+        public async Task<User>GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+            return user;
         }
     }
 }
