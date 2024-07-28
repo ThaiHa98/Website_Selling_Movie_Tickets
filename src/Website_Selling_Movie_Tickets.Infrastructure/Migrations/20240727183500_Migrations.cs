@@ -16,7 +16,8 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ScreeningRoom_Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,20 +58,18 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ShowTimes",
+                name: "ScreeningRooms",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Movies_Id = table.Column<int>(type: "int", nullable: false),
-                    Theaters_Id = table.Column<int>(type: "int", nullable: false),
-                    Theaters_Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Theaters_Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TimeSlot_Id = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Numberofseats = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShowTimes", x => x.Id);
+                    table.PrimaryKey("PK_ScreeningRooms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,7 +97,8 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,11 +113,13 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     User_Id = table.Column<int>(type: "int", nullable: false),
                     User_Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Showtime_Id = table.Column<int>(type: "int", nullable: false),
-                    Seat = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Movies_Id = table.Column<int>(type: "int", nullable: false),
+                    TimeSlot_Id = table.Column<int>(type: "int", nullable: false),
                     ChairType_Id = table.Column<int>(type: "int", nullable: false),
                     ChairType_Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ChairType_Volume = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ScreeningRoom_Id = table.Column<int>(type: "int", nullable: false),
+                    Theaters_Id = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,7 +132,9 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    StartTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EndTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -170,7 +174,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                 name: "Movies");
 
             migrationBuilder.DropTable(
-                name: "ShowTimes");
+                name: "ScreeningRooms");
 
             migrationBuilder.DropTable(
                 name: "Slides");

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Website_Selling_Movie_Tickets.Domain.Entities
 {
-    public class Theaters //Danh sách rạp
+    public class Theater //Danh sách rạp
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
+        public string Date { get; set; }
     }
 }

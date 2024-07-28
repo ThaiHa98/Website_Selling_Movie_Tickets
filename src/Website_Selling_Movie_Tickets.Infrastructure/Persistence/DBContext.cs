@@ -17,12 +17,12 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<TimeSlot> TimeSlots { get; set; }
         public virtual DbSet<Tickets> Tickets { get; set; }
-        public virtual DbSet<Theaters> Theaters { get; set; }
-        public virtual DbSet<ShowTimes> ShowTimes { get; set; }
+        public virtual DbSet<Theater> Theaters { get; set; }
         public virtual DbSet<Movies> Movies { get; set; }
         public virtual DbSet<Slide> Slides { get; set; }
         public virtual DbSet<Genre> Genres { get; set; }
         public virtual DbSet<ChairType> ChairTypes { get; set; }
+        public virtual DbSet<ScreeningRoom> ScreeningRooms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,8 +35,12 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
                 .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<Tickets>()
-                .Property(x => x.ChairType_Volume)
+                .Property(x => x.Status)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<Tickets>()
+                .Property(x => x.ChairType_Price)
+                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<ChairType>()
                 .Property(x => x.Price)
@@ -46,8 +50,13 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
                 .Property(x => x.Roles)
                 .HasConversion(
                  v => v.ToString(),
-                 v => (Roles)Enum.Parse(typeof(Roles), v)
-        );
+                 v => (Roles)Enum.Parse(typeof(Roles), v));
+
+            modelBuilder.Entity<ScreeningRoom>()
+                .Property(x => x.Status)
+                .HasConversion(
+                 v => v.ToString(),
+                 v => (StatusScreenigRoom)Enum.Parse(typeof(StatusScreenigRoom), v));
         }
     }
 }

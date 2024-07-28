@@ -9,6 +9,8 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
     public class TimeSlot
     {
         public int Id { get; set; }
-        public DateTime DateTime { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+        public DateTime Date { get; set; }
     }
 }

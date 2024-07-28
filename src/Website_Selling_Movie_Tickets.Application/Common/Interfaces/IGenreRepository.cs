@@ -11,7 +11,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
     public interface IGenreRepository 
     {
         Task<List<Genre>> GetAll();
-        Task<Pagination<Genre>> GetAll(int page, int pageSize);
+        Task<Pagination<Genre>> GetAll(int pageIndex, int pageSize);
         Task<Genre> GetById(int id);
         Task<Genre> AddAsync(Genre genre);
         Task<Genre> UpdateAsync(Genre genre);

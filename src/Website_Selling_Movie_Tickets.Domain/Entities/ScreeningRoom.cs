@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 
 namespace Website_Selling_Movie_Tickets.Domain.Entities
 {
-    public class ChairType //Loại ghế
+    public class ScreeningRoom
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public decimal Price { get; set; }
-        public int ScreeningRoom_Id { get; set; }
+        public int Numberofseats { get; set; }
+        public StatusScreenigRoom Status {  get; set; }
+
     }
 }

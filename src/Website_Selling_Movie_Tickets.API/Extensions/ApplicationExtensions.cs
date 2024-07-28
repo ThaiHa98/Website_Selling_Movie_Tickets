@@ -20,7 +20,7 @@ namespace Website_Selling_Movie_Tickets.API.Extensions
 
             app.UseStaticFiles();
 
-            app.UseAuthentication(); // Phải được khai báo trước UseAuthorization
+            app.UseAuthentication();
 
             app.UseMiddleware<LastActivityMiddleware>();
 

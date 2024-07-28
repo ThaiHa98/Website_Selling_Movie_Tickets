@@ -4,6 +4,8 @@ using Serilog;
 using Website_Selling_Movie_Tickets.API.Extensions;
 using Website_Selling_Movie_Tickets.API.Identity.Authorization;
 using Website_Selling_Movie_Tickets.Application;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
