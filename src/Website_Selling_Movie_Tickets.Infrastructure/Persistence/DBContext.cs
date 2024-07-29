@@ -18,7 +18,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
         public virtual DbSet<TimeSlot> TimeSlots { get; set; }
         public virtual DbSet<Tickets> Tickets { get; set; }
         public virtual DbSet<Theater> Theaters { get; set; }
-        public virtual DbSet<Movies> Movies { get; set; }
+        public virtual DbSet<Movie> Movies { get; set; }
         public virtual DbSet<Slide> Slides { get; set; }
         public virtual DbSet<Genre> Genres { get; set; }
         public virtual DbSet<ChairType> ChairTypes { get; set; }

@@ -37,9 +37,9 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return entity;
         }
 
-        public List<Theater> GetAll()
+        public async Task<List<Theater>> GetAll()
         {
-            return _dbContext.Theaters.ToList();
+            return await _dbContext.Theaters.ToListAsync();
         }
 
         public async Task<Theater> GetById(int id)
@@ -47,14 +47,15 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return await _dbContext.Theaters.FindAsync(id);
         }
 
-        public Pagination<Theater> GetPagination(int pageIndex, int pageSize)
+        public async Task<Pagination<Theater>> GetPagination(int pageIndex, int pageSize)
         {
-            var totalRecords = _dbContext.Theaters.Count();
-            var item = _dbContext.Theaters
-                                 .Skip((pageIndex - 1) * pageSize)
-                                 .Take(pageSize)
-                                 .ToList();
-            return new Pagination<Theater>(pageIndex, pageSize, totalRecords, item);
+            var totalRecords = await _dbContext.Theaters.CountAsync();
+            var items = await _dbContext.Theaters
+                         .Skip((pageIndex - 1) * pageSize)
+                         .Take(pageSize)
+                         .ToListAsync();
+
+            return new Pagination<Theater>(pageIndex, pageSize, totalRecords, items);
         }
 
         public async Task<Theater> Update(Theater entity)

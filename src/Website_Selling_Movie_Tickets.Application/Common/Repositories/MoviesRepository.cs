@@ -1,4 +1,6 @@
-﻿using Shared.SeedWork;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,50 +19,46 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
         {
             _dbContext = dbContext;
         }
-        public Movies Create(Movies movie)
+
+        public async Task<Movie> Create(Movie movie)
         {
-            _dbContext.Movies.Add(movie);
+            await _dbContext.Movies.AddAsync(movie);
             _dbContext.SaveChanges();
             return movie;
         }
 
-        public bool Delete(Movies movie)
+        public async Task<bool> Delete(Movie movie)
         {
             _dbContext.Remove(movie);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return true;
         }
 
-        public List<Movies> GetAll()
+        public async Task<List<Movie>> GetAll()
         {
-            return _dbContext.Movies.ToList();
+            return await _dbContext.Movies.ToListAsync();
         }
 
-        public Movies GetById(int id)
+        public async Task<Movie> GetById(int id)
         {
-            var movies = _dbContext.Movies.FirstOrDefault(x => x.Id == id);
-            if (movies == null) 
-            {
-                throw new Exception("Id not found");
-            }
-            return movies;
+            return await _dbContext.Movies.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Pagination<Movies> GetPagination(int pageIndex, int pageSize)
+        public async Task<Pagination<Movie>> GetPagination(int pageIndex, int pageSize)
         {
-            var totalRecords = _dbContext.Movies.Count();
-            var item = _dbContext.Movies
-                                 .Skip((pageIndex - 1) * pageSize)
-                                 .Take(pageSize)
-                                 .ToList();
-            return new Pagination<Movies>(pageIndex, pageSize, totalRecords,item);
+            var totalRecords = await _dbContext.Movies.CountAsync();
+            var items = await _dbContext.Movies
+                                  .Skip((pageIndex - 1) * pageSize)
+                                  .Take(pageSize)
+                                  .ToListAsync();
+            return new Pagination<Movie>(pageIndex, totalRecords,totalRecords, items);
         }
 
-        public Movies Update(Movies movie)
+        public async Task<string> Update(Movie movie)
         {
             _dbContext.Update(movie);
-            _dbContext.SaveChanges();
-            return movie;
+            await _dbContext.SaveChangesAsync();
+            return "Update Successfully";
         }
     }
 }

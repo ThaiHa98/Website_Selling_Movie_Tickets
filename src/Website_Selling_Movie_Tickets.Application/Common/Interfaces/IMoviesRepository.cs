@@ -1,4 +1,5 @@
-﻿using Shared.SeedWork;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,11 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
 {
     public interface IMoviesRepository
     {
-        List<Movies> GetAll();
-        Pagination<Movies> GetPagination(int pageIndex, int pageSize);
-        Movies GetById(int id);
-        public Movies Create(Movies movie);
-        Movies Update(Movies movie);
-        bool Delete(Movies movie);
+        Task<List<Movie>> GetAll();
+        Task<Pagination<Movie>> GetPagination(int pageIndex, int pageSize);
+        Task<Movie>GetById(int id);
+        Task<Movie> Create(Movie movie);
+        Task<string> Update(Movie movie);
+        Task<bool>Delete(Movie movie);
     }
 }

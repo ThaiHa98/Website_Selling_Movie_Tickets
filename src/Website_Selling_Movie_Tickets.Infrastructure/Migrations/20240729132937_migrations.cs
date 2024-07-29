@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 {
-    public partial class Migrations : Migration
+    public partial class migrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,13 +44,15 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Showtimes_Id = table.Column<int>(type: "int", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GenreId = table.Column<int>(type: "int", nullable: false),
-                    RunningTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RunningTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Premiere = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Language = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rated = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Director = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Actors = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

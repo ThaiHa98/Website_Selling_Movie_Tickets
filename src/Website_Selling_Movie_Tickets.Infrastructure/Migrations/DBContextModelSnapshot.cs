@@ -62,7 +62,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.Movies", b =>
+            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.Movie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,12 +70,24 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Actors")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Director")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Language")
                         .IsRequired()
@@ -92,11 +104,9 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RunningTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Showtimes_Id")
-                        .HasColumnType("int");
+                    b.Property<string>("RunningTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -10,8 +10,8 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
 {
     public interface ITheaterRepository
     {
-        List<Theater> GetAll();
-        Pagination<Theater> GetPagination(int pageIndex, int pageSize);
+        Task<List<Theater>> GetAll();
+        Task<Pagination<Theater>> GetPagination(int pageIndex, int pageSize);
         Task<Theater> GetById(int id);
         Theater Create(Theater entity);
         Task<Theater> Update(Theater entity);

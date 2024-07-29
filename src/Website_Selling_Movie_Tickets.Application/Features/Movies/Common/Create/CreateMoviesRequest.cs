@@ -1,14 +1,18 @@
-﻿using System;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Website_Selling_Movie_Tickets.Domain.Entities;
 
-namespace Website_Selling_Movie_Tickets.Domain.Entities
+namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Create
 {
-    public class Movie
+    public class CreateMoviesRequest : IRequest<Movie>
     {
-        public int Id { get; set; }
         public string Name { get; set; }
-        public string Image { get; set; }
+        public IFormFile Image { get; set; }
         public int GenreId { get; set; }
         public string RunningTime { get; set; } //bao nhiêu phút
         public DateTime Premiere { get; set; }//khởi chiếu
@@ -16,11 +20,6 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public string Rated { get; set; }//xếp hạng
         public string Description { get; set; }
         public string Director { get; set; } //Đạo diễn
-        public string Actors { get; set; } // danh sách diễn viên
-
-        public List<string> GetActorList()
-        {
-            return JsonSerializer.Deserialize<List<string>>(Actors) ?? new List<string>();
-        }
+        public List<string> Actor { get; set; }// diễn viên
     }
 }
