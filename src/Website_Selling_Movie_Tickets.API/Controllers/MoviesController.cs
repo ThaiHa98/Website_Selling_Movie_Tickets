@@ -65,7 +65,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         #endregion
 
         #region Update
-        [HttpPost("Update")]
+        [HttpPut("Update")]
         public async Task<IActionResult> UpdateMovie([FromBody] UpdateMoviesRequest request)
         {
             try
@@ -94,7 +94,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         #endregion
 
         #region Delete
-        [HttpPost("Delete")]
+        [HttpDelete("Delete")]
         public async Task<IActionResult> DeleteMovie(int Id)
         {
             try

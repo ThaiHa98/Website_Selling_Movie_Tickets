@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -18,14 +19,31 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<Genre> AddAsync(Genre genre)
+        public async Task<Response<Genre>> AddAsync(Genre genre)
         {
             _dbContext.Genres.Add(genre);
-            await _dbContext.SaveChangesAsync();
-            return genre;
+            var result = await _dbContext.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return new Response<Genre>
+                {
+                    Success = true,
+                    Data = genre,
+                    Message = "Genre has been added successfully."
+                };
+            }
+            else
+            {
+                return new Response<Genre>
+                {
+                    Success = false,
+                    Message = "An error occurred while adding the genre."
+                };
+            }
         }
 
-        public async Task<Genre> DeleteAsync(int id)
+        public async Task<Response<Genre>> DeleteAsync(int id)
         {
             var genre = await _dbContext.Genres.FindAsync(id);
             if (genre == null)
@@ -33,8 +51,24 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                 return null;
             }
             _dbContext.Genres.Remove(genre);
-            await _dbContext.SaveChangesAsync();
-            return genre;
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return new Response<Genre>
+                {
+                    Success = true,
+                    Data = genre,
+                    Message = "Genre has been Delete successfully."
+                };
+            }
+            else
+            {
+                return new Response<Genre>
+                {
+                    Success = false,
+                    Message = "An error occurred while Delete the genre."
+                };
+            }
         }
 
 
@@ -59,11 +93,27 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return genres;
         }
 
-        public async Task<Genre> UpdateAsync(Genre genre)
+        public async Task<Response<Genre>> UpdateAsync(Genre genre)
         {
             _dbContext.Update(genre);
-            await _dbContext.SaveChangesAsync();
-            return genre;
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return new Response<Genre>
+                {
+                    Success = true,
+                    Data = genre,
+                    Message = "Genre has been Update successfully."
+                };
+            }
+            else
+            {
+                return new Response<Genre>
+                {
+                    Success = false,
+                    Message = "An error occurred while Update the genre."
+                };
+            }
         }
     }
 }

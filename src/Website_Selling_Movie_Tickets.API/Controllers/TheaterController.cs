@@ -41,7 +41,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
             {
                 _logger.Information("Begin CreateTheater");
                 var result = await _mediator.Send(request);
-                _logger.Information($"End CreateTheater response: {JsonConvert.SerializeObject(result)}");
+                _logger.Information($"End CreateTheater reponse: {JsonConvert.SerializeObject(result)}");
 
                 return Ok(new ApiResultBase
                 {
@@ -64,7 +64,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         #endregion
 
         #region Update
-        [HttpPost("Update")]
+        [HttpPut("Update")]
         public async Task<IActionResult> UpdateTheater([FromBody] UpdateTheaterRequest request)
         {
             try
@@ -93,7 +93,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         #endregion
 
         #region Delete
-        [HttpPost("Delete")]
+        [HttpDelete("Delete")]
         public async Task<IActionResult> DeleteTheater(int id)
         {
             try
@@ -204,7 +204,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 var query = new GetAllTheaterQuery();
                 var result = await _mediator.Send(query);
 
-                _logger.Information($"End {nameof(GetAll)} response: {JsonConvert.SerializeObject(result)}");
+                _logger.Information($"End {nameof(GetAll)} reponse: {JsonConvert.SerializeObject(result)}");
 
                 return Ok(new ApiResultBase
                 {

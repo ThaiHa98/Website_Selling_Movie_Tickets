@@ -12,8 +12,8 @@ using Website_Selling_Movie_Tickets.Infrastructure.Persistence;
 namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20240729132937_migrations")]
-    partial class migrations
+    [Migration("20240730084120_Migrations")]
+    partial class Migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -126,6 +126,15 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfLoveBoxes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfRegularSeat")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfVIPSeat")
+                        .HasColumnType("int");
 
                     b.Property<int>("Numberofseats")
                         .HasColumnType("int");

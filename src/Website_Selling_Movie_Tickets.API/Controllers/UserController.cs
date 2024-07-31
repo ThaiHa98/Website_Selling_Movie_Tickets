@@ -76,7 +76,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     PageSize = pageSize
                 };
                 var result = await _mediator.Send(query);
-                _logger.Information($"End GetAll response: {JsonConvert.SerializeObject(result)}");
+                _logger.Information($"End GetAll reponse: {JsonConvert.SerializeObject(result)}");
 
                 return Ok(new ApiResultBase
                 {
@@ -108,7 +108,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
             {
                 _logger.Information($"Begin {Methods} LoginUser");
                 var result = await _mediator.Send(request);
-                _logger.Information($"End LoginUser response: {JsonConvert.SerializeObject(result)}");
+                _logger.Information($"End LoginUser reponse: {JsonConvert.SerializeObject(result)}");
                 return Ok(new ApiResultBase
                 {
                     data = result,
@@ -141,7 +141,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     Id = Id
                 };
                 var result = await _mediator.Send(query);
-                _logger.Information($"End GetById response:{JsonConvert.SerializeObject(result)}");
+                _logger.Information($"End GetById reponse:{JsonConvert.SerializeObject(result)}");
                 return Ok(new ApiResultBase
                 {
                     data = result,
@@ -186,7 +186,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 // Gửi yêu cầu LogoutRequest tới MediatR
                 var response = await _mediator.Send(new LogoutRequest { Id = userId });
 
-                _logger.Information($"End LogoutUser response:{JsonConvert.SerializeObject(response)}");
+                _logger.Information($"End LogoutUser reponse:{JsonConvert.SerializeObject(response)}");
                 return Ok(new ApiResultBase
                 {
                     data = response,
@@ -215,7 +215,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
             {
                 _logger.Information($"Begin {Methods} UpdateUser");
                 var result = await _mediator.Send(request);
-                _logger.Information($"End UpdateUser response : {JsonConvert.SerializeObject(result)}");
+                _logger.Information($"End UpdateUser reponse : {JsonConvert.SerializeObject(result)}");
                 return Ok(new ApiResultBase
                 {
                     data = result,

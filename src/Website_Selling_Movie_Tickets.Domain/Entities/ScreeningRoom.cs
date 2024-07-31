@@ -12,6 +12,9 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public int Numberofseats { get; set; }
+        public int NumberOfRegularSeat { get; set; }
+        public int NumberOfVIPSeat { get; set; }
+        public int NumberOfLoveBoxes { get; set; }
         public StatusScreenigRoom Status {  get; set; }
 
     }

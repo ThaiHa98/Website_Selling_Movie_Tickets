@@ -125,6 +125,15 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberOfLoveBoxes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfRegularSeat")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfVIPSeat")
+                        .HasColumnType("int");
+
                     b.Property<int>("Numberofseats")
                         .HasColumnType("int");
 

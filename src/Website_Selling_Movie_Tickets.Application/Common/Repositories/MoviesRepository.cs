@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.SeedWork;
 using System;
@@ -20,18 +21,34 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Movie> Create(Movie movie)
+        public async Task<Response<Movie>> Create(Movie movie)
         {
             await _dbContext.Movies.AddAsync(movie);
-            _dbContext.SaveChanges();
-            return movie;
+            var result = _dbContext.SaveChanges();
+            if (result > 0)
+            {
+                return new Response<Movie>
+                {
+                    Success = true,
+                    Data = movie,
+                    Message = "Movie has been added successfully."
+                };
+            }
+            else
+            {
+                return new Response<Movie>
+                {
+                    Success = false,
+                    Message = "An error occurred while adding the movie."
+                };
+            }
         }
 
         public async Task<bool> Delete(Movie movie)
         {
             _dbContext.Remove(movie);
-            await _dbContext.SaveChangesAsync();
-            return true;
+            var result = await _dbContext.SaveChangesAsync();
+            return result > 0;
         }
 
         public async Task<List<Movie>> GetAll()
@@ -57,8 +74,15 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
         public async Task<string> Update(Movie movie)
         {
             _dbContext.Update(movie);
-            await _dbContext.SaveChangesAsync();
-            return "Update Successfully";
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return "Update Successfully";
+            }
+            else
+            {
+                return "Update Failed";
+            }
         }
     }
 }

@@ -37,8 +37,15 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Upd
 
             try
             {
-                var updateTheater = await _theaterRepository.Update(query);
-                return updateTheater;
+                var response = await _theaterRepository.Update(query);
+                if (response.Success)
+                {
+                    return response.Data;
+                }
+                else
+                {
+                    throw new Exception(response.Message);
+                }
             }
             catch (Exception ex)
             {

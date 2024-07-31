@@ -22,26 +22,31 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Users.Common.Create
         {
             try
             {
-                if(request == null)
+                if (request == null)
                 {
-                    throw new Exception("The request was not fully entered into the data fields");
+                    throw new ArgumentNullException(nameof(request), "Yêu cầu chưa được nhập đầy đủ vào các trường dữ liệu");
                 }
-                var user = await _userRepository.AddAsync(request.UserModel);
-                var userModel = new UserModel
+
+                var response = await _userRepository.AddAsync(request.UserModel);
+                if (!response.Success)
                 {
-                    Name = user.Name,
-                    Email = user.Email,
-                    Password = BCrypt.Net.BCrypt.HashPassword(user.Password),
-                    Address = user.Address,
-                    Phone = user.Phone,
-                    DateofBirth = user.DateofBirth
+                    throw new ApplicationException(response.Message);
+                }
+
+                return new UserModel
+                {
+                    Name = response.Data.Name,
+                    Email = response.Data.Email,
+                    Address = response.Data.Address,
+                    Phone = response.Data.Phone,
+                    DateofBirth = response.Data.DateofBirth
                 };
-                return userModel;
             }
             catch (Exception ex)
             {
-                throw new ApplicationException("An error occurred while creating the user", ex);
+                throw new ApplicationException("Đã xảy ra lỗi khi tạo người dùng", ex);
             }
         }
+
     }
 }

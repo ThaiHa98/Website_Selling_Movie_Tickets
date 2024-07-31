@@ -19,19 +19,26 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Queries.Ge
 
         public async Task<Theater> Handle(GetByIdTheatersQuery request, CancellationToken cancellationToken)
         {
-            if (request == null)
+            try
             {
-                throw new ArgumentNullException(nameof(request), "Request cannot be null");
+                if (request == null)
+                {
+                    throw new ArgumentNullException(nameof(request), "Request cannot be null");
+                }
+
+                var theater = await _theaterRepository.GetById(request.Id);
+
+                if (theater == null)
+                {
+                    throw new Exception("Theater not found");
+                }
+
+                return theater;
             }
-
-            var theater = await _theaterRepository.GetById(request.Id);
-
-            if (theater == null)
+            catch (Exception ex) 
             {
-                throw new Exception("Theater not found");
+                throw new ApplicationException("An error occurred while GetById the movies.", ex);
             }
-
-            return theater;
         }
     }
 }

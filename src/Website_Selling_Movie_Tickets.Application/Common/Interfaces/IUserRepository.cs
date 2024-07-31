@@ -13,9 +13,9 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
     {
         Task<IList<User>> GetAll();
         Task<Pagination<User>> GetAllUser(int pageIndex, int pageSize);
-        Task<UserModel> AddAsync(UserModel entity);
+        Task<Response<UserModel>> AddAsync(UserModel entity);
         Task<User> GetByIdAsync(int id);
-        Task RemoveAsync(int id);
-        Task<User> UpdateAsync(User entity);
+        Task<Response<User>> RemoveAsync(int id);
+        Task<Response<User>> Update(User entity);
     }
 }

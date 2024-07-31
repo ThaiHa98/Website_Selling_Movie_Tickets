@@ -13,9 +13,9 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<List<Theater>> GetAll();
         Task<Pagination<Theater>> GetPagination(int pageIndex, int pageSize);
         Task<Theater> GetById(int id);
-        Theater Create(Theater entity);
-        Task<Theater> Update(Theater entity);
-        Task<Theater> Delete(int id);
+        Task<Response<Theater>> Create(Theater entity);
+        Task<Response<Theater>> Update(Theater entity);
+        Task<Response<Theater>> Delete(int id);
 
     }
 }

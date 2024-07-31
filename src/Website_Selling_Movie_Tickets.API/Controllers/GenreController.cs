@@ -36,11 +36,11 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         {
             try
             {
-                _logger.Information("Begin CreateGenre");
+                _logger.Information($"Begin {Methods} CreateGenre");
 
                 var result = await _mediator.Send(request);
 
-                _logger.Information($"End {Methods} CreateGenre response: {JsonConvert.SerializeObject(result)}");
+                _logger.Information($"End {Methods} CreateGenre reponse: {JsonConvert.SerializeObject(result)}");
 
                 return Ok(new ApiResultBase
                 {
@@ -55,7 +55,6 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 _logger.Error($"Error in CreateGenre: {ex.Message}");
                 return StatusCode((int)HttpStatusCode.InternalServerError, new ApiResultBase
                 {
-                    data = null,
                     success = false,
                     httpStatusCode = (int)HttpStatusCode.InternalServerError,
                     message = "An error occurred while creating the genre."
@@ -94,7 +93,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         #endregion
 
         #region Delete
-        [HttpPost("Delete")]
+        [HttpDelete("Delete")]
         public async Task<IActionResult> DeleteGenre(int Id)
         {
             try

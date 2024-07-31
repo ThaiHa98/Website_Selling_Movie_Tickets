@@ -14,7 +14,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<List<Movie>> GetAll();
         Task<Pagination<Movie>> GetPagination(int pageIndex, int pageSize);
         Task<Movie>GetById(int id);
-        Task<Movie> Create(Movie movie);
+        Task<Response<Movie>> Create(Movie movie);
         Task<string> Update(Movie movie);
         Task<bool>Delete(Movie movie);
     }

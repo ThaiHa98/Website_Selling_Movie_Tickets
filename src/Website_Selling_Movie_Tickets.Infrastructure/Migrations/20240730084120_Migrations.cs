@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 {
-    public partial class migrations : Migration
+    public partial class Migrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -67,6 +67,9 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Numberofseats = table.Column<int>(type: "int", nullable: false),
+                    NumberOfRegularSeat = table.Column<int>(type: "int", nullable: false),
+                    NumberOfVIPSeat = table.Column<int>(type: "int", nullable: false),
+                    NumberOfLoveBoxes = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

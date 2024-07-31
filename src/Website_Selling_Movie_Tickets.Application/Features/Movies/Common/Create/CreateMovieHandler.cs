@@ -54,8 +54,13 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
                     Actors = string.Join(", ", request.Actor),
                 };
 
-                var result = await _moviesRepository.Create(movie);
-                return result;
+                var response = await _moviesRepository.Create(movie);
+                if (!response.Success)
+                {
+                    throw new ApplicationException(response.Message);
+                }
+
+                return response.Data;
             }
             catch (Exception ex)
             {

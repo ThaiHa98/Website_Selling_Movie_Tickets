@@ -35,9 +35,13 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Cre
 
                 };
 
-                var createdTheater = _theaterRepository.Create(theater);
+                var response = await _theaterRepository.Create(theater);
 
-                return createdTheater;
+                if (!response.Success)
+                {
+                    throw new Exception(response.Message);
+                }
+                return response.Data;
             }
             catch (Exception ex) 
             {

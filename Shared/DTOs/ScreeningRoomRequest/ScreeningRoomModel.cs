@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace Shared.DTOs.Actor
 {
-    public class ActorModel
+    public class ScreeningRoomModel
     {
-        [Key]
-        public int Id { get; set; } // Khóa chính
         public string Name { get; set; }
+        public int Numberofseats { get; set; }
+        public int NumberOfRegularSeat { get; set; }
+        public int NumberOfVIPSeat { get; set; }
+        public int NumberOfLoveBoxes { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<UserModel> AddAsync(UserModel userModel)
+        public async Task<Response<UserModel>> AddAsync(UserModel userModel)
         {
             var user = new User
             {
@@ -34,7 +34,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                 Create = DateTime.Now
             };
             _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
+            var result = await _dbContext.SaveChangesAsync();
             var addedUserModel = new UserModel
             {
                 Name = user.Name,
@@ -44,8 +44,23 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                 Phone = user.Phone,
                 DateofBirth = user.DateofBirth,
             };
-
-            return addedUserModel;
+            if (result > 0) 
+            {
+                return new Response<UserModel>
+                {
+                    Success = true,
+                    Data = addedUserModel,
+                    Message = "User has been added successfully"
+                };
+            }
+            else
+            {
+                return new Response<UserModel>
+                {
+                    Success = false,
+                    Message = "An error occurred while adding the user"
+                };
+            }
         }
 
         public async Task<IList<User>> GetAll()
@@ -65,16 +80,62 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return new Pagination<User>(pageIndex, pageSize, totalRecords, items);
         }
 
-        public Task RemoveAsync(int id)
+        public async Task<Response<User>> RemoveAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await _dbContext.Users.FindAsync(id);
+            _dbContext.Users.Remove(user);
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return new Response<User>
+                {
+                    Success = true,
+                    Message = "User has been removed successfully"
+                };
+            }
+            else
+            {
+                return new Response<User>
+                {
+                    Success = false,
+                    Message = "Failed to remove user"
+                };
+            }
         }
 
-        public async Task<User> UpdateAsync(User entity)
+        public async Task<Response<User>> Update(User entity)
         {
-            _dbContext.Update(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
+            try
+            {
+                _dbContext.Users.Update(entity);
+                var result = await _dbContext.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    return new Response<User>
+                    {
+                        Success = true,
+                        Data = entity,
+                        Message = "User has been updated successfully"
+                    };
+                }
+                else
+                {
+                    return new Response<User>
+                    {
+                        Success = false,
+                        Message = "Failed to update user"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Response<User>
+                {
+                    Success = false,
+                    Message = $"An error occurred: {ex.Message}"
+                };
+            }
         }
 
 

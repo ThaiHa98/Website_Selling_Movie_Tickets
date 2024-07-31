@@ -24,21 +24,33 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Users.Common.Update
         {
             try
             {
-                var user = _dbContext.Users.FirstOrDefault(x => x.Id == request.Id);
+                // Tìm người dùng bất đồng bộ bằng FindAsync
+                var user = await _dbContext.Users.FindAsync(request.Id);
                 if (user == null)
                 {
-                    throw new Exception("Id not found");
+                    throw new Exception("Không tìm thấy Id");
                 }
+
+                // Cập nhật các thuộc tính của người dùng
                 user.Email = request.Email;
                 user.Address = request.Address;
                 user.Phone = request.Phone;
 
-                var update = await _userRepository.UpdateAsync(user);
-                return update;
+                // Cập nhật người dùng và nhận kết quả
+                var response = await _userRepository.Update(user);
+
+                if (response.Success)
+                {
+                    return response.Data; // Trả về người dùng đã được cập nhật
+                }
+                else
+                {
+                    throw new Exception(response.Message); // Ném ngoại lệ nếu cập nhật không thành công
+                }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                throw new Exception($"Error updating user: {ex.Message}", ex);
+                throw new Exception($"Lỗi khi cập nhật người dùng: {ex.Message}", ex);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -18,23 +19,51 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
         {
             _dbContext = dbContext;
         }
-        public Theater Create(Theater entity)
+        public async Task<Response<Theater>> Create(Theater entity)
         {
             _dbContext.Theaters.Add(entity);
-            _dbContext.SaveChanges();
-            return entity;
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return new Response<Theater>
+                {
+                    Success = true,
+                    Data = entity,
+                    Message = "Theater has been added successfully"
+                };
+            }
+            else
+            {
+                return new Response<Theater>
+                {
+                    Success = false,
+                    Message = "Failed to add theater"
+                };
+            }
         }
 
-        public async Task<Theater> Delete(int id)
+        public async Task<Response<Theater>> Delete(int id)
         {
             var entity = await _dbContext.Theaters.FindAsync(id);
-            if (entity == null)
-            {
-                throw new Exception("Theater not found");
-            }
             _dbContext.Theaters.Remove(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return new Response<Theater>
+                {
+                    Success = true,
+                    Data = entity,
+                    Message = "Theater has been added successfully"
+                };
+            }
+            else
+            {
+                return new Response<Theater>
+                {
+                    Success = false,
+                    Message = "Failed to add theater"
+                };
+            }
         }
 
         public async Task<List<Theater>> GetAll()
@@ -58,11 +87,27 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return new Pagination<Theater>(pageIndex, pageSize, totalRecords, items);
         }
 
-        public async Task<Theater> Update(Theater entity)
+        public async Task<Response<Theater>> Update(Theater entity)
         {
             _dbContext.Theaters.Update(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
+            var result = await _dbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return new Response<Theater>
+                {
+                    Success = true,
+                    Data = entity,
+                    Message = "Theater has been added successfully"
+                };
+            }
+            else
+            {
+                return new Response<Theater>
+                {
+                    Success = false,
+                    Message = "Failed to add theater"
+                };
+            }
         }
     }
 }

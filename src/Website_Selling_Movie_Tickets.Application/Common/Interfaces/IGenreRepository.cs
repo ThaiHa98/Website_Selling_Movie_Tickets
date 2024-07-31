@@ -13,8 +13,8 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<List<Genre>> GetAll();
         Task<Pagination<Genre>> GetAll(int pageIndex, int pageSize);
         Task<Genre> GetById(int id);
-        Task<Genre> AddAsync(Genre genre);
-        Task<Genre> UpdateAsync(Genre genre);
-        Task<Genre> DeleteAsync(int id);
+        Task<Response<Genre>> AddAsync(Genre genre);
+        Task<Response<Genre>> UpdateAsync(Genre genre);
+        Task<Response<Genre>> DeleteAsync(int id);
     }
 }

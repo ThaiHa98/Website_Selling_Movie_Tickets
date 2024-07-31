@@ -29,6 +29,8 @@ namespace Website_Selling_Movie_Tickets.Application
                     .AddTransient<IHttpContextAccessor, HttpContextAccessor>()
                     .AddTransient<IGenreRepository, GenreRepository>()
                     .AddTransient<ITheaterRepository, TheaterRepository>()
-                    .AddTransient<IMoviesRepository, MoviesRepository>();
+                    .AddTransient<IMoviesRepository, MoviesRepository>()
+                    .AddTransient<ITimeSlotRepository, TimeSlotRepository>()
+                    .AddTransient<IScreeningRoomRepository, ScreeningRoomRepository>();
     }
 }
