@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Website_Selling_Movie_Tickets.Domain.Entities;
+using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 
 namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Create
 {
@@ -21,5 +22,6 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
         public string Description { get; set; }
         public string Director { get; set; } //Đạo diễn
         public List<string> Actor { get; set; }// diễn viên
+        public StatusMovie Status { get; set; }
     }
 }

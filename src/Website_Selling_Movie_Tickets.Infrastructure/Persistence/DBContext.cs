@@ -16,7 +16,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
         }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<TimeSlot> TimeSlots { get; set; }
-        public virtual DbSet<Tickets> Tickets { get; set; }
+        public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<Theater> Theaters { get; set; }
         public virtual DbSet<Movie> Movies { get; set; }
         public virtual DbSet<Slide> Slides { get; set; }
@@ -30,15 +30,15 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
                 .Property(x => x.Status)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<Tickets>()
+            modelBuilder.Entity<Ticket>()
                 .Property(x => x.ChairType_Price)
                 .HasColumnType("decimal(18,2)");
 
-            modelBuilder.Entity<Tickets>()
+            modelBuilder.Entity<Ticket>()
                 .Property(x => x.Status)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<Tickets>()
+            modelBuilder.Entity<Ticket>()
                 .Property(x => x.ChairType_Price)
                 .HasColumnType("decimal(18,2)");
 
@@ -57,6 +57,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
                 .HasConversion(
                  v => v.ToString(),
                  v => (StatusScreenigRoom)Enum.Parse(typeof(StatusScreenigRoom), v));
+
+            modelBuilder.Entity<Movie>()
+                .Property(x => x.Status)
+                .HasConversion<string>();
         }
     }
 }

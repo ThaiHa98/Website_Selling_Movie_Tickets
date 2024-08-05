@@ -17,5 +17,6 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<Response<ScreeningRoomModel>> AddAsync(ScreeningRoomModel entity);
         Task<string> UpdateAsync(ScreeningRoom entity);
         Task<bool> RemoveAsync(ScreeningRoom screeningRoom);
+        Task<Pagination<ScreeningRoom>> SearchByKeyAsync(string key, int pageIndex, int pageSize);
     }
 }

@@ -10,6 +10,7 @@ using Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Update;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetAll;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetById;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetPagination;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.SearchByKey;
 using Website_Selling_Movie_Tickets.Domain.Entities;
 using ILogger = Serilog.ILogger;
 
@@ -205,6 +206,40 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 };
                 var result = await _mediator.Send(request);
                 _logger.Information($"End {Methods} GetByIdMovie reponse: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.Id,
+                    message = "Delete Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region SearchByKey
+        [HttpPatch("SearchByKey")]
+        public async Task<IActionResult> SearchByKeyMovieQuery(string key)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} SearchByKeyMovieQuery");
+                var request = new SearchByKeyMovieQuery
+                {
+                    key = key
+                };
+                var result = await _mediator.Send(request);
+                _logger.Information($"End {Methods} SearchByKeyMovieQuery reponse: {JsonConvert.SerializeObject(result)}");
                 return Ok(new ApiResultBase
                 {
                     data = result,

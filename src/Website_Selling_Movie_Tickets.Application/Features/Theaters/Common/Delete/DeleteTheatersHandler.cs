@@ -31,7 +31,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Del
                 var deleteTheaters = await _heaterRepository.Delete(request.Id);
                 return "Delete Successfully";
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new ApplicationException("An error occurred while Delete the theater.", ex);
             }

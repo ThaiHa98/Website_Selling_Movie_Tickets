@@ -37,7 +37,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.ScreeningRooms.Quer
             }
             catch (Exception ex) 
             {
-                throw new ApplicationException("Screening room not found");
+                throw new ApplicationException("Screening room not found", ex);
             }
         }
     }

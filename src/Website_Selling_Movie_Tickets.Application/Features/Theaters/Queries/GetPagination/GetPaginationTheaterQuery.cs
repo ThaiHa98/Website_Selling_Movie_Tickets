@@ -10,7 +10,7 @@ using Website_Selling_Movie_Tickets.Domain.Entities;
 namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Queries.GetPagination
 {
     public class GetPaginationTheaterQuery : IRequest<Pagination<Theater>>
-    { 
+    {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }
     }

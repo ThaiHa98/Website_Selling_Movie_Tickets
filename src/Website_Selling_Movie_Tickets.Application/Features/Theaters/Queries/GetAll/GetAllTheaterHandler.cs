@@ -18,7 +18,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Queries.Ge
 
         public async Task<List<Theater>> Handle(GetAllTheaterQuery request, CancellationToken cancellationToken)
         {
-            var query =  await _theaterRepository.GetAll();
+            var query = await _theaterRepository.GetAll();
             return query;
         }
     }

@@ -7,9 +7,9 @@ using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 
 namespace Website_Selling_Movie_Tickets.Domain.Entities
 {
-    public class Tickets
+    public class Ticket
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public int User_Id { get; set; }
         public string User_Name { get; set; }
         public int Movies_Id { get; set; }

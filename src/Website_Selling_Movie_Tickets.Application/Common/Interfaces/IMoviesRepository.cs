@@ -17,5 +17,6 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<Response<Movie>> Create(Movie movie);
         Task<string> Update(Movie movie);
         Task<bool>Delete(Movie movie);
+        Task<Movie> SearchByKeyAsync(string key);
     }
 }

@@ -108,6 +108,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
@@ -207,13 +211,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.ToTable("Theaters");
                 });
 
-            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.Tickets", b =>
+            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.Ticket", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ChairType_Id")
                         .HasColumnType("int");

@@ -15,6 +15,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<Response<ChairType>> DeleteAsync(int id);
         Task<Response<List<ChairType>>> GetAll();
         Task<Response<Pagination<ChairType>>> GetPagination(int pageIndex, int pageSize);
+        Task<ChairType> GetById(int id);
 
     }
 }

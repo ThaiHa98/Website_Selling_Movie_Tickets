@@ -35,7 +35,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Queries.Ge
 
                 return theater;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new ApplicationException("An error occurred while GetById the movies.", ex);
             }

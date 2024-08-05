@@ -106,6 +106,25 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return result > 0;
         }
 
+        public async Task<Pagination<ScreeningRoom>> SearchByKeyAsync(string key, int pageIndex, int pageSize)
+        {
+            var query = _dbContext.ScreeningRooms.AsQueryable();
+
+            if (!string.IsNullOrEmpty(key))
+            {
+                query = query.Where(sr => sr.Name.Contains(key));
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var items = await query.Skip((pageIndex - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .ToListAsync();
+
+            return new Pagination<ScreeningRoom>(pageIndex, pageSize, totalItems, items);
+        }
+
+
         public async Task<string> UpdateAsync(ScreeningRoom entity)
         {
             _dbContext.ScreeningRooms.Update(entity);

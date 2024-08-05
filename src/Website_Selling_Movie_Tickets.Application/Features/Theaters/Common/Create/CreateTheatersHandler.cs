@@ -43,7 +43,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Cre
                 }
                 return response.Data;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new ApplicationException("An error occurred while creating the theater.", ex);
             }

@@ -10,6 +10,7 @@ using Website_Selling_Movie_Tickets.Application.Features.ScreeningRooms.Common.U
 using Website_Selling_Movie_Tickets.Application.Features.ScreeningRooms.Queries.GetAll;
 using Website_Selling_Movie_Tickets.Application.Features.ScreeningRooms.Queries.GetById;
 using Website_Selling_Movie_Tickets.Application.Features.ScreeningRooms.Queries.GetPagination;
+using Website_Selling_Movie_Tickets.Application.Features.ScreeningRooms.Queries.SearchByKey;
 using ILogger = Serilog.ILogger;
 
 namespace Website_Selling_Movie_Tickets.API.Controllers
@@ -200,6 +201,36 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 };
                 var result = await _mediator.Send(request);
                 _logger.Information($"End {Methord} GetPagination reponse: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.PageCount,
+                    message = "Result"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region SearchByKey
+        [HttpGet("SearchByKey")]
+        public async Task<IActionResult> SearchByKeyScreeningRoom([FromQuery] SearchByKeyScreeningRoomQuery request)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methord} SearchByKeyScreeningRoom");
+                var result = await _mediator.Send(request);
+                _logger.Information($"End {Methord} SearchByKeyScreeningRoom reponse: {JsonConvert.SerializeObject(result)}");
                 return Ok(new ApiResultBase
                 {
                     data = result,

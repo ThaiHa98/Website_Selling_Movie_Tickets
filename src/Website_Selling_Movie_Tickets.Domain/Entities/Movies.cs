@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 
 namespace Website_Selling_Movie_Tickets.Domain.Entities
 {
@@ -17,6 +18,7 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public string Description { get; set; }
         public string Director { get; set; } //Đạo diễn
         public string Actors { get; set; } // danh sách diễn viên
+        public StatusMovie Status { get; set; }
 
         public List<string> GetActorList()
         {

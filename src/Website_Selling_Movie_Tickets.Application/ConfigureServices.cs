@@ -31,6 +31,9 @@ namespace Website_Selling_Movie_Tickets.Application
                     .AddTransient<ITheaterRepository, TheaterRepository>()
                     .AddTransient<IMoviesRepository, MoviesRepository>()
                     .AddTransient<ITimeSlotRepository, TimeSlotRepository>()
-                    .AddTransient<IScreeningRoomRepository, ScreeningRoomRepository>();
+                    .AddTransient<IScreeningRoomRepository, ScreeningRoomRepository>()
+                    .AddTransient<IChairTypeRepository, ChairTypeRepository>()
+                    .AddTransient<ITicketsRepository, TicketsRepository>()
+                    .AddTransient<ISlideRepository, SlideRepository>();
     }
 }

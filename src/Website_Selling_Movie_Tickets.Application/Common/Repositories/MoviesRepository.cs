@@ -71,6 +71,18 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return new Pagination<Movie>(pageIndex, totalRecords,totalRecords, items);
         }
 
+        public async Task<Movie> SearchByKeyAsync(string key)
+        {
+            var query = _dbContext.Movies.AsQueryable();
+
+            if (!string.IsNullOrEmpty(key))
+            {
+                query = query.Where(m => m.Name.Contains(key));
+            }
+
+            return await query.FirstOrDefaultAsync();
+        }
+
         public async Task<string> Update(Movie movie)
         {
             _dbContext.Update(movie);

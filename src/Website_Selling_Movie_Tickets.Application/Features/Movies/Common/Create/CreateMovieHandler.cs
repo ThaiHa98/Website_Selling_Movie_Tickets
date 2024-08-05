@@ -13,6 +13,7 @@ using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Text.Json;
+using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 
 
 namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Create
@@ -52,6 +53,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
                     Description = request.Description,
                     Director = request.Director,
                     Actors = string.Join(", ", request.Actor),
+                    Status = request.Status,
                 };
 
                 var response = await _moviesRepository.Create(movie);
@@ -74,7 +76,17 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
             {
                 string currentDataFolder = DateTime.Now.ToString("dd-MM-yyyy");
                 var baseFolder = _configuration.GetValue<string>("BaseAddress");
-                var folderPath = Path.Combine(baseFolder, currentDataFolder);
+
+                // Tạo thư mục Slide
+                var slideFolder = Path.Combine(baseFolder, "Movie");
+
+                if (!Directory.Exists(slideFolder))
+                {
+                    Directory.CreateDirectory(slideFolder);
+                }
+
+                // Tạo thư mục date nằm trong thư mục Slide
+                var folderPath = Path.Combine(slideFolder, currentDataFolder);
 
                 if (!Directory.Exists(folderPath))
                 {
@@ -90,7 +102,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
                 }
 
                 // Trả về tên thư mục và tên ảnh
-                return Path.Combine(currentDataFolder, fileName);
+                return Path.Combine("Movie", currentDataFolder, fileName);
             }
             catch (Exception ex)
             {

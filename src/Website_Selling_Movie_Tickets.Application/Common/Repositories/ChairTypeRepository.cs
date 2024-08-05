@@ -102,6 +102,12 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             }
         }
 
+        public async Task<ChairType> GetById(int id)
+        {
+            var chairType = await _dbContext.ChairTypes.FirstOrDefaultAsync(x => x.Id == id);
+            return chairType;
+        }
+
         public async Task<Response<Pagination<ChairType>>> GetPagination(int pageIndex, int pageSize)
         {
             try
