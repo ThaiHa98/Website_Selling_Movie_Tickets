@@ -12,6 +12,5 @@ namespace Website_Selling_Movie_Tickets.Application.Features.ChairTypes.Common.C
     {
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public int ScreeningRoom_Id { get; set; }
     }
 }

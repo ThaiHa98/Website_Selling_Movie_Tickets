@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -9,15 +10,18 @@ using Website_Selling_Movie_Tickets.Application.Common.Interfaces;
 using Website_Selling_Movie_Tickets.Domain.Entities;
 using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 using Website_Selling_Movie_Tickets.Infrastructure.Persistence;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 {
     public class SlideRepository : ISlideRepository
     {
         private readonly DBContext _dbContext;
-        public SlideRepository(DBContext dbContext) 
+        private readonly IConfiguration _configuration;
+        public SlideRepository(DBContext dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext;
+            _configuration = configuration;
         }
         public async Task<Response<Slide>> Create(Slide slide)
         {
@@ -103,6 +107,44 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                 .ToList();
             return new Pagination<Slide>(pageIndex, pageSize, totalRecords, items);
         }
+
+        public async Task<byte[]> GetSlideImageBytes(int id)
+        {
+            try
+            {
+                var slide = await _dbContext.Slides
+                    .Where(x => x.Id == id)
+                    .Select(x => x.Image) // Giả sử x.Image là đường dẫn hoặc tên tệp
+                    .FirstOrDefaultAsync();
+
+                if (slide == null)
+                {
+                    throw new Exception($"Slide not found with ID {id}");
+                }
+
+                var baseFolder = _configuration.GetValue<string>("BaseAddress");
+
+                if (string.IsNullOrEmpty(baseFolder))
+                {
+                    throw new Exception("BaseAddress configuration is invalid or missing.");
+                }
+
+                var baseFolderLocal = new Uri(baseFolder).LocalPath;
+                var completeFilePath = Path.Combine(baseFolderLocal, slide);
+
+                if (!System.IO.File.Exists(completeFilePath))
+                {
+                    throw new Exception($"File not found at path: {completeFilePath}");
+                }
+
+                return await System.IO.File.ReadAllBytesAsync(completeFilePath);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving the image information.", ex);
+            }
+        }
+
 
         public async Task<Response<Slide>> Update(Slide slide)
         {

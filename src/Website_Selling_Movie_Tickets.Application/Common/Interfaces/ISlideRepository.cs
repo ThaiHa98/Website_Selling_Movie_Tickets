@@ -16,5 +16,6 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<Response<Slide>> Create(Slide slide);
         Task<Response<Slide>> Update(Slide slide);
         Task<Response<Slide>> Delete(int id);
+        Task<byte[]> GetSlideImageBytes(int id);
     }
 }

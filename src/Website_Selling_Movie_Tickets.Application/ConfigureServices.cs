@@ -9,6 +9,8 @@ using TinTuc.Application.Helper;
 using Website_Selling_Movie_Tickets.Application.Common.Behaviours;
 using Website_Selling_Movie_Tickets.Application.Common.Interfaces;
 using Website_Selling_Movie_Tickets.Application.Common.Repositories;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Create;
+using Website_Selling_Movie_Tickets.Application.Features.Slides.Common.Create;
 
 namespace Website_Selling_Movie_Tickets.Application
 {
@@ -34,6 +36,8 @@ namespace Website_Selling_Movie_Tickets.Application
                     .AddTransient<IScreeningRoomRepository, ScreeningRoomRepository>()
                     .AddTransient<IChairTypeRepository, ChairTypeRepository>()
                     .AddTransient<ITicketsRepository, TicketsRepository>()
-                    .AddTransient<ISlideRepository, SlideRepository>();
+                    .AddTransient<ISlideRepository, SlideRepository>()
+                    .AddValidatorsFromAssemblyContaining<CreateMoviesRequestValidator>()
+                    .AddValidatorsFromAssemblyContaining<CreateSlidesRequestValidator>();
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient.Server;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -18,5 +20,6 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<string> Update(Movie movie);
         Task<bool>Delete(Movie movie);
         Task<Movie> SearchByKeyAsync(string key);
+        Task<byte[]> GetMovieImageBytes(int id);
     }
 }

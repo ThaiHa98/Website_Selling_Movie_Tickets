@@ -144,5 +144,48 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
             return user;
         }
+
+        public async Task<Response<UserModel>> AddAdmin(UserModel userModel)
+        {
+            var user = new User
+            {
+                Name = userModel.Name,
+                Email = userModel.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(userModel.Password),
+                Address = userModel.Address,
+                Phone = userModel.Phone,
+                DateofBirth = userModel.DateofBirth,
+                Roles = Roles.Managerment,
+                Create = DateTime.Now
+            };
+            _dbContext.Users.Add(user);
+            var result = await _dbContext.SaveChangesAsync();
+            var addedUserModel = new UserModel
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password,
+                Address = user.Address,
+                Phone = user.Phone,
+                DateofBirth = user.DateofBirth,
+            };
+            if (result > 0)
+            {
+                return new Response<UserModel>
+                {
+                    Success = true,
+                    Data = addedUserModel,
+                    Message = "User has been added successfully"
+                };
+            }
+            else
+            {
+                return new Response<UserModel>
+                {
+                    Success = false,
+                    Message = "An error occurred while adding the user"
+                };
+            }
+        }
     }
 }

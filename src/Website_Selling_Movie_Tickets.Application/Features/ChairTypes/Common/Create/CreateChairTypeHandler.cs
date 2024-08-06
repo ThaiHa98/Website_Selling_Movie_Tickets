@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -14,38 +15,46 @@ namespace Website_Selling_Movie_Tickets.Application.Features.ChairTypes.Common.C
     public class CreateChairTypeHandler : IRequestHandler<CreateChairTypeRequest, ChairType>
     {
         private readonly IChairTypeRepository _chairTypeRepository;
-        private readonly DBContext _dbContext;
-        public CreateChairTypeHandler(IChairTypeRepository chairTypeRepository, DBContext dBContext)
+        private readonly IValidator<CreateChairTypeRequest> _validator;
+
+        public CreateChairTypeHandler(IChairTypeRepository chairTypeRepository, IValidator<CreateChairTypeRequest> validator)
         {
-            _dbContext = dBContext;
             _chairTypeRepository = chairTypeRepository;
+            _validator = validator;
         }
+
         public async Task<ChairType> Handle(CreateChairTypeRequest request, CancellationToken cancellationToken)
         {
+            var validationResult = await _validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new ValidationException(errors);
+            }
+
             try
             {
-                var screeningRoom = _dbContext.ScreeningRooms.FirstOrDefault(x => x.Id == request.ScreeningRoom_Id);
-                if (screeningRoom == null)
-                {
-                    throw new Exception("Id not found");
-                }
                 var chairType = new ChairType
                 {
                     Name = request.Name,
-                    Price = request.Price,
-                    ScreeningRoom_Id = screeningRoom.Id,
+                    Price = request.Price
                 };
+
                 var response = await _chairTypeRepository.AddAsync(chairType);
+
                 if (!response.Success)
                 {
                     throw new Exception(response.Message);
                 }
+
                 return response.Data;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                throw new Exception("An error occurred while creating the theater.",ex);
+                throw new Exception("An error occurred while creating the chair type.", ex);
             }
         }
     }
 }
+

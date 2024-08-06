@@ -1,4 +1,5 @@
 ﻿using AutoMapper.Configuration;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -19,14 +20,22 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Slides.Common.Creat
     {
         private readonly ISlideRepository _slideRepository;
         private readonly IConfiguration _configuration;
-        public CreateSlidesRequestHandler(ISlideRepository slideRepository, IConfiguration configuration)
+        private readonly IValidator<CreateSlidesRequest> _validator;
+        public CreateSlidesRequestHandler(ISlideRepository slideRepository, IConfiguration configuration, IValidator<CreateSlidesRequest> validator)
         {
+            _validator = validator;
             _configuration = configuration;
             _slideRepository = slideRepository;
         }
 
         public async Task<Response<Slide>> Handle(CreateSlidesRequest request, CancellationToken cancellationToken)
         {
+            var validationResult = await _validator.ValidateAsync(request);
+            if (!validationResult.IsValid) 
+            {
+                var errors = string.Join(", ",validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new ValidationException(errors);
+            }
             try
             {
                 if (request == null)

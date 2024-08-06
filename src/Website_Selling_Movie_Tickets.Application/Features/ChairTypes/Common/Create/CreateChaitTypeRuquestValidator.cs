@@ -18,10 +18,6 @@ namespace Website_Selling_Movie_Tickets.Application.Features.ChairTypes.Common.C
             RuleFor(request => request.Price)
                 .NotEmpty().WithMessage("Price is required")
                 .GreaterThan(0).WithMessage("Price must be greater than 0");
-
-            RuleFor(request => request.ScreeningRoom_Id)
-                .NotEmpty().WithMessage("ScreeningRoom_Id is required")
-                .GreaterThan(0).WithMessage("ScreeningRoom_Id must be greater than 0");
         }
     }
 }

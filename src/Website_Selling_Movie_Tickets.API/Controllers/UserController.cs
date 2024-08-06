@@ -8,6 +8,7 @@ using System.Diagnostics.Metrics;
 using System.Net;
 using System.Security.Claims;
 using Website_Selling_Movie_Tickets.Application.Features.Users.Common.Create;
+using Website_Selling_Movie_Tickets.Application.Features.Users.Common.CreateAdmin;
 using Website_Selling_Movie_Tickets.Application.Features.Users.Common.Login;
 using Website_Selling_Movie_Tickets.Application.Features.Users.Common.Logout;
 using Website_Selling_Movie_Tickets.Application.Features.Users.Common.Update;
@@ -225,6 +226,36 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 });
             }
             catch (Exception ex) 
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region CreateAdmin
+        [HttpPost("CreateAdmin")]
+        public async Task<IActionResult> CreateAdmin([FromBody] CreateAdminUsersRequest request)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} CreateUser");
+                var query = new CreateAdminUsersRequest(request.UserModel);
+                var result = await _mediator.Send(query);
+                _logger.Information($"End {Methods} CreateUser repose : {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    message = "Create user successfully"
+                });
+            }
+            catch (Exception ex)
             {
                 return BadRequest(new ApiResultBase
                 {

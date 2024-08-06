@@ -53,7 +53,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 {
                     success = false,
                     httpStatusCode = (int)HttpStatusCode.BadRequest,
-                    message = "An error occurred while creating the genre."
+                    message = ex.Message
                 });
             }
         }
@@ -82,7 +82,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 {
                     success = false,
                     httpStatusCode = (int)HttpStatusCode.BadRequest,
-                    message = "An error occurred while creating the genre."
+                    message = ex.Message
                 });
             }
         }
@@ -115,7 +115,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 {
                     success = false,
                     httpStatusCode = (int)HttpStatusCode.BadRequest,
-                    message = "An error occurred while creating the genre."
+                    message = ex.Message
                 });
             }
         }
@@ -145,7 +145,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                 {
                     success = false,
                     httpStatusCode = (int)HttpStatusCode.BadRequest,
-                    message = "An error occurred while creating the genre."
+                    message = ex.Message
                 });
             }
 
