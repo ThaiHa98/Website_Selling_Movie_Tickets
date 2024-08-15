@@ -20,6 +20,8 @@ namespace Website_Selling_Movie_Tickets.API.Extensions
 
             app.UseStaticFiles();
 
+            app.UseCors("AllowAngularApp"); // Đảm bảo sử dụng chính sách CORS đúng tên
+
             app.UseAuthentication();
 
             app.UseMiddleware<LastActivityMiddleware>();
@@ -38,5 +40,20 @@ namespace Website_Selling_Movie_Tickets.API.Extensions
                 endpoints.MapDefaultControllerRoute();
             });
         }
+
+        public static void ConfigureCors(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp", builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .WithMethods("POST", "PUT", "GET", "DELETE", "OPTIONS")
+                        .AllowCredentials();
+                });
+            });
+        }
     }
 }
+

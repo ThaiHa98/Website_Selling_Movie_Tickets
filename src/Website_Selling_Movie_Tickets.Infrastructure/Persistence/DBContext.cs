@@ -23,6 +23,8 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
         public virtual DbSet<Genre> Genres { get; set; }
         public virtual DbSet<ChairType> ChairTypes { get; set; }
         public virtual DbSet<ScreeningRoom> ScreeningRooms { get; set; }
+        public virtual DbSet<SubtitleTable> SubtitleTables { get; set; }
+        public virtual DbSet<Seat> Seats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,6 +63,14 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
             modelBuilder.Entity<Movie>()
                 .Property(x => x.Status)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<Seat>()
+                .Property(x => x.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<SubtitleTable>()
+                .Ignore(e => e.TimeSlot_Id) // Bỏ qua TimeSlot_Ids trong database
+                .Property(e => e.TimeSlot_Id); // Ánh xạ TimeSlot_Ids_String vào cột trong database
         }
     }
 }

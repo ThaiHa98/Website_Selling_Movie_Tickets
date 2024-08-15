@@ -18,11 +18,17 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public string Description { get; set; }
         public string Director { get; set; } //Đạo diễn
         public string Actors { get; set; } // danh sách diễn viên
+        public string TheatersIds { get; set; }
         public StatusMovie Status { get; set; }
 
         public List<string> GetActorList()
         {
             return JsonSerializer.Deserialize<List<string>>(Actors) ?? new List<string>();
+        }
+
+        public List<int> GetTheatersIds()
+        {
+            return JsonSerializer.Deserialize<List<int>>(TheatersIds) ?? new List<int>();
         }
     }
 }

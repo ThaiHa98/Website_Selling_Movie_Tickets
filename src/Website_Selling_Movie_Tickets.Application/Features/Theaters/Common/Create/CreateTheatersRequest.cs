@@ -13,5 +13,6 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Cre
         public string Name { get; set; }
         public string Address { get; set; }
         public string Date { get; set; }
+        public List<int> SubtitleTable_Id { get; set; }
     }
 }

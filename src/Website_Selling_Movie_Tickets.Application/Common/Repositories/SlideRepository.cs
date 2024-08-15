@@ -89,7 +89,9 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 
         public async Task<List<Slide>> GetAll()
         {
-            return await _dbContext.Slides.ToListAsync();
+            return await _dbContext.Slides
+                                   .Where(s => s.Status == StatusSlide.Active)
+                                   .ToListAsync();
         }
 
         public async Task<Slide> GetById(int id)
@@ -112,36 +114,39 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
         {
             try
             {
-                var slide = await _dbContext.Slides
+                var movie = await _dbContext.Slides
                     .Where(x => x.Id == id)
-                    .Select(x => x.Image) // Giả sử x.Image là đường dẫn hoặc tên tệp
+                    .Select(x => new
+                    {
+                        x.Image
+                    })
                     .FirstOrDefaultAsync();
 
-                if (slide == null)
+                if (movie == null)
                 {
-                    throw new Exception($"Slide not found with ID {id}");
+                    throw new Exception($"Không tìm thấy bộ phim nào với ID {id}");
                 }
 
                 var baseFolder = _configuration.GetValue<string>("BaseAddress");
 
                 if (string.IsNullOrEmpty(baseFolder))
                 {
-                    throw new Exception("BaseAddress configuration is invalid or missing.");
+                    throw new Exception("Cấu hình BaseAddress không hợp lệ hoặc thiếu.");
                 }
 
                 var baseFolderLocal = new Uri(baseFolder).LocalPath;
-                var completeFilePath = Path.Combine(baseFolderLocal, slide);
+                var completeFilePath = Path.Combine(baseFolderLocal, movie.Image);
 
                 if (!System.IO.File.Exists(completeFilePath))
                 {
-                    throw new Exception($"File not found at path: {completeFilePath}");
+                    throw new Exception($"Không tìm thấy tệp tại đường dẫn: {completeFilePath}");
                 }
 
                 return await System.IO.File.ReadAllBytesAsync(completeFilePath);
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while retrieving the image information.", ex);
+                throw new Exception("Đã xảy ra lỗi khi lấy thông tin hình ảnh của bộ phim.", ex);
             }
         }
 

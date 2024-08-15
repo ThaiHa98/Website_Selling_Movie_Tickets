@@ -1,4 +1,5 @@
-﻿using Shared.SeedWork;
+﻿using Shared.DTOs.Theater;
+using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
 {
     public interface ITheaterRepository
     {
-        Task<List<Theater>> GetAll();
+        Task<List<TheaterModel>> GetAll();
         Task<Pagination<Theater>> GetPagination(int pageIndex, int pageSize);
-        Task<Theater> GetById(int id);
+        Task<TheaterModel> GetById(int id);
         Task<Response<Theater>> Create(Theater entity);
         Task<Response<Theater>> Update(Theater entity);
         Task<Response<Theater>> Delete(int id);

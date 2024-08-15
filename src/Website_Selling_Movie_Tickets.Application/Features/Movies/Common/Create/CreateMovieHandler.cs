@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Text.Json;
 using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Create
@@ -37,7 +38,18 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
                 var genre = _dbContext.Genres.FirstOrDefault(x => x.Id == request.GenreId);
                 if (genre == null)
                 {
-                    throw new ArgumentException("Genre Id not found", nameof(genre));
+                    throw new ArgumentException("Genre Id not found", nameof(request.GenreId));
+                }
+
+                var TheatersId = new List<int>();
+                foreach (var theaterId in request.TheatersIds)
+                {
+                    var theater = await _dbContext.Theaters.FirstOrDefaultAsync(x => x.Id == theaterId);
+                    if (theater == null)
+                    {
+                        throw new Exception($"Theater with Id {theaterId} not found");
+                    }
+                    TheatersId.Add(theater.Id);
                 }
 
                 var imagePath = await SaveImageAsync(request.Image);
@@ -53,6 +65,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
                     Description = request.Description,
                     Director = request.Director,
                     Actors = string.Join(", ", request.Actor),
+                    TheatersIds = string.Join(", ", TheatersId),
                     Status = request.Status,
                 };
 

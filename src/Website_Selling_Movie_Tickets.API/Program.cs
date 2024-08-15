@@ -25,10 +25,12 @@ try
     builder.Services.ConfigureSwagger();
     builder.Services.AddMemoryCache();
     builder.Services.ConfigureAuthenticationHandler(builder.Configuration);
+    builder.Services.ConfigureCors();
 
     var app = builder.Build();
 
     app.UseInfrastructure();
+    app.UseCors("AllowAngularApp");
 
     app.Run();
 }

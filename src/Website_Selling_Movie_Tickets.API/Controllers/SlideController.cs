@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared.SeedWork;
 using System.Net;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetImage;
 using Website_Selling_Movie_Tickets.Application.Features.Slides.Common.Create;
 using Website_Selling_Movie_Tickets.Application.Features.Slides.Common.Delete;
 using Website_Selling_Movie_Tickets.Application.Features.Slides.Common.Update;
 using Website_Selling_Movie_Tickets.Application.Features.Slides.Queries.GetAll;
 using Website_Selling_Movie_Tickets.Application.Features.Slides.Queries.GetById;
+using Website_Selling_Movie_Tickets.Application.Features.Slides.Queries.GetImage;
 using Website_Selling_Movie_Tickets.Application.Features.Slides.Queries.GetPagination;
 using Website_Selling_Movie_Tickets.Domain.Entities;
 using ILogger = Serilog.ILogger;
@@ -50,7 +52,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     message = "Create Slide Successfully"
                 });
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(new ApiResultBase
                 {
@@ -111,7 +113,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     message = "Delete Successfully"
                 });
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return BadRequest(new ApiResultBase
                 {
@@ -175,7 +177,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     message = "GetById Successfully"
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(new ApiResultBase
                 {
@@ -208,8 +210,46 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     message = "GetPagination Successfully"
                 });
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region Image
+        [HttpGet("Image/{id}")]
+        public async Task<IActionResult> GetImage(int id)
+        {
+            try
+            {
+                _logger.Information($"Begin GetImage for ID: {id}");
+                var query = new GetImageSlideQuery
+                {
+                    Id = id
+                };
+                var imageBytes = await _mediator.Send(query);
+
+                if (imageBytes == null || imageBytes.Length == 0)
+                {
+                    return NotFound(new ApiResultBase
+                    {
+                        success = false,
+                        httpStatusCode = (int)HttpStatusCode.NotFound,
+                        message = "Image not found"
+                    });
+                }
+                var contentType = "image/jpeg";
+                return File(imageBytes, contentType);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "An error occurred while retrieving the image");
                 return BadRequest(new ApiResultBase
                 {
                     success = false,

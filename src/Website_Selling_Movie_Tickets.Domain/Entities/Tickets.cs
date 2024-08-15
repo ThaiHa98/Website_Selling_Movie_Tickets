@@ -18,6 +18,9 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public decimal ChairType_Price { get; set; }
         public int ScreeningRoom_Id {  get; set; }
         public int Theaters_Id { get; set; }
+        public int Seat_Id { get; set; }
+        public string SeatNumber { get; set; }
+        public int SubtitleTable_Id { get; set; }
         public StatusTicket Status {  get; set; }
     }
 }

@@ -11,6 +11,7 @@ using Website_Selling_Movie_Tickets.Application.Common.Interfaces;
 using Website_Selling_Movie_Tickets.Application.Common.Repositories;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Create;
 using Website_Selling_Movie_Tickets.Application.Features.Slides.Common.Create;
+using Website_Selling_Movie_Tickets.Application.Features.SubtitleTables.Common.Create;
 
 namespace Website_Selling_Movie_Tickets.Application
 {
@@ -38,6 +39,9 @@ namespace Website_Selling_Movie_Tickets.Application
                     .AddTransient<ITicketsRepository, TicketsRepository>()
                     .AddTransient<ISlideRepository, SlideRepository>()
                     .AddValidatorsFromAssemblyContaining<CreateMoviesRequestValidator>()
-                    .AddValidatorsFromAssemblyContaining<CreateSlidesRequestValidator>();
+                    .AddValidatorsFromAssemblyContaining<CreateSlidesRequestValidator>()
+                    .AddValidatorsFromAssemblyContaining<CreateSubtitleTableRequestValidator>()
+                    .AddTransient<ISubtitleTableRepository, SubtitleTableRepository>()
+                    .AddTransient<ISeatRepository, SeatRepository>();
     }
 }

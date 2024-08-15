@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
+using Shared.DTOs.MoviesView;
+using Shared.DTOs.SearchStatusMovies;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -15,11 +17,12 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
     {
         Task<List<Movie>> GetAll();
         Task<Pagination<Movie>> GetPagination(int pageIndex, int pageSize);
-        Task<Movie>GetById(int id);
+        Task<MoviesViewModel> GetById(int id, DateTime premiere);
         Task<Response<Movie>> Create(Movie movie);
         Task<string> Update(Movie movie);
         Task<bool>Delete(Movie movie);
         Task<Movie> SearchByKeyAsync(string key);
         Task<byte[]> GetMovieImageBytes(int id);
+        Task<List<MoviesViewModel>> SearchStatusAsync(string status);
     }
 }

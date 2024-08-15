@@ -1,8 +1,11 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Shared.DTOs.MoviesView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Website_Selling_Movie_Tickets.Application.Common.Interfaces;
 using Website_Selling_Movie_Tickets.Domain.Entities;
@@ -10,30 +13,31 @@ using Website_Selling_Movie_Tickets.Infrastructure.Persistence;
 
 namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetById
 {
-    public class GetByIdMoviesHandler : IRequestHandler<GetByIdMoviesQuery, Movie>
+    public class GetByIdMoviesHandler : IRequestHandler<GetByIdMoviesQuery, MoviesViewModel>
     {
         private readonly IMoviesRepository _moviesRepository;
         private readonly DBContext _dbContext;
-        public GetByIdMoviesHandler(IMoviesRepository moviesRepository, DBContext dBContext)
+
+        public GetByIdMoviesHandler(IMoviesRepository moviesRepository, DBContext dbContext)
         {
-            _dbContext = dBContext;
+            _dbContext = dbContext;
             _moviesRepository = moviesRepository;
         }
-        public async Task<Movie> Handle(GetByIdMoviesQuery request, CancellationToken cancellationToken)
+
+        public async Task<MoviesViewModel> Handle(GetByIdMoviesQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var movie = _dbContext.Movies.FirstOrDefault(x => x.Id == request.Id);
-                if (movie == null)
+                var result = await _moviesRepository.GetById(request.Id, request.premiere);
+                if (result == null)
                 {
-                    throw new Exception("Id not found");
+                    throw new Exception("Data not found");
                 }
-                var getById = await _moviesRepository.GetById(request.Id);
-                return movie;
+                return result;
             }
             catch (Exception ex) 
             {
-                throw new ApplicationException("An error occurred while GetById the movies.",ex);
+                throw new ApplicationException("Screening room not found", ex);
             }
         }
     }

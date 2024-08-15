@@ -15,6 +15,8 @@ namespace Shared.DTOs.Ticket
         public List<int> ChairType_Id { get; set; }
         public int ScreeningRoom_Id { get; set; }
         public int Theaters_Id { get; set; }
+        public int Seat_Id { get; set; }
+        public string SeatNumber { get; set; }
 
     }
 }

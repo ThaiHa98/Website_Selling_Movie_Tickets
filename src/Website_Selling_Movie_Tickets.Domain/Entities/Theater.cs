@@ -11,6 +11,7 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
+        public string SubtitleTable_Id { get; set; }
         public string Date { get; set; }
     }
 }

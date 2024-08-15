@@ -37,9 +37,6 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ScreeningRoom_Id")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("ChairTypes");
@@ -112,6 +109,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TheatersIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
@@ -150,6 +151,37 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.ToTable("ScreeningRooms");
                 });
 
+            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.Seat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ChairType_Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Row")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ScreeningRoom_Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Seats");
+                });
+
             modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.Slide", b =>
                 {
                     b.Property<int>("Id")
@@ -186,6 +218,27 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.ToTable("Slides");
                 });
 
+            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.SubtitleTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TimeSlot_Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubtitleTables");
+                });
+
             modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.Theater", b =>
                 {
                     b.Property<int>("Id")
@@ -203,6 +256,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubtitleTable_Id")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -228,9 +285,19 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.Property<int>("ScreeningRoom_Id")
                         .HasColumnType("int");
 
+                    b.Property<string>("SeatNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Seat_Id")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubtitleTable_Id")
+                        .HasColumnType("int");
 
                     b.Property<int>("Theaters_Id")
                         .HasColumnType("int");

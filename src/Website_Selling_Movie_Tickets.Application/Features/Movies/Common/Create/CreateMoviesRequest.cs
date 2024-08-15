@@ -15,13 +15,15 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
         public string Name { get; set; }
         public IFormFile Image { get; set; }
         public int GenreId { get; set; }
-        public string RunningTime { get; set; } //bao nhiêu phút
-        public DateTime Premiere { get; set; }//khởi chiếu
-        public string Language { get; set; }//Phụ đề….
-        public string Rated { get; set; }//xếp hạng
+        public string RunningTime { get; set; }
+        public DateTime Premiere { get; set; }
+        public string Language { get; set; }
+        public string Rated { get; set; }
         public string Description { get; set; }
-        public string Director { get; set; } //Đạo diễn
-        public List<string> Actor { get; set; }// diễn viên
+        public string Director { get; set; }
+        public List<string> Actor { get; set; }
+        public List<int> TheatersIds { get; set; }
         public StatusMovie Status { get; set; }
+
     }
 }
