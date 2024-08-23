@@ -11,9 +11,13 @@ using Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Update;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetAll;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetById;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetImage;
-using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetMoviesViewModel;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetMoviesDetails;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetPagination;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetSubtitleTable;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetTheaterAddressesByMovieId;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetTheaterNames;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.SearchByKey;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.SearchIronfilmreleased;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.SearchStatus;
 using Website_Selling_Movie_Tickets.Domain.Entities;
 using ILogger = Serilog.ILogger;
@@ -197,28 +201,28 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         }
         #endregion
 
-        #region GetById
-        [HttpGet("GetById")]
-        public async Task<IActionResult> GetByIdMovie(int Id, DateTime Premiere)
+        #region GetPremiere
+        [HttpGet("GetPremiere")]
+        public async Task<IActionResult> GetPremiereMovie(int Id, DateTime Premiere)
         {
             try
             {
-                _logger.Information($"Begin {Methods} GetByIdMovie");
-                var request = new GetByIdMoviesQuery
+                _logger.Information($"Begin {Methods} GetPremiereMovie");
+                var request = new GetPremiereMoviesQuery
                 {
                     Id = Id,
                     premiere = Premiere
 
                 };
                 var result = await _mediator.Send(request);
-                _logger.Information($"End {Methods} GetByIdMovie reponse: {JsonConvert.SerializeObject(result)}");
+                _logger.Information($"End {Methods} GetPremiereMovie reponse: {JsonConvert.SerializeObject(result)}");
                 return Ok(new ApiResultBase
                 {
                     data = result,
                     success = true,
                     httpStatusCode = (int)HttpStatusCode.OK,
-                    totalCount = result.Id,
-                    message = "Delete Successfully"
+                    totalCount = result.Count,
+                    message = "GetPremiereMovie Successfully"
                 });
             }
             catch (Exception ex)
@@ -339,5 +343,176 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         }
         #endregion
 
+        #region SearchIronfilmreleased
+        [HttpGet("SearchIronfilmreleased")]
+        public async Task<IActionResult> SearchIronfilmreleasedMovie(string status)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} SearchIronfilmreleasedMovie");
+                var request = new SearchIronfilmreleasedMovieQuery
+                {
+                    key = status
+                };
+                var result = await _mediator.Send(request);
+                _logger.Information($"End {Methods} SearchIronfilmreleasedMovie reponse: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.Count,
+                    message = "Delete Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region GetMoviesDetails
+        [HttpGet("GetMoviesDetails")]
+        public async Task<IActionResult> GetMoviesDetails(int id)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} GetMoviesDetails");
+                var request = new GetMoviesDetailsQuery
+                {
+                    Id = id
+                };
+                var result = await _mediator.Send(request);
+                _logger.Information($"End {Methods} GetMoviesDetails response: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.Id,
+                    message = "GetMoviesDetails Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region GetTheaterAddressesByMovieId
+        [HttpGet("GetTheaterAddressesByMovieId")]
+        public async Task<IActionResult> GetTheaterAddressesByMovieId(int id)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} GetTheaterAddressesByMovieId");
+                var request = new GetTheaterAddressesByMovieIdQuery
+                {
+                    Id = id
+                };
+                var result = await _mediator.Send(request);
+                _logger.Information($"End {Methods} GetTheaterAddressesByMovieId response: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.Count,
+                    message = "GetTheaterAddressesByMovieId Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
+        #region GetTheaterNames
+        [HttpGet("GetTheaterNames")]
+        public async Task<IActionResult> GetTheaterNames(int id, string address)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} GetTheaterNames");
+                var request = new GetTheaterNamesQuery
+                {
+                    Id = id,
+                    address = address
+                };
+                var result = await _mediator.Send(request);
+                _logger.Information($"End {Methods} GetTheaterNames response: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.Count,
+                    message = "GetTheaterNames Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region GetSubtitleTable
+        [HttpGet("GetSubtitleTable")]
+        public async Task<IActionResult> GetSubtitleTable(int id)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} GetSubtitleTable");
+                var request = new GetSubtitleTableQuery
+                {
+                    Id = id,
+                };
+                var result = await _mediator.Send(request);
+                _logger.Information($"End {Methods} GetSubtitleTable reponse: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.Count,
+                    message = "GetSubtitleTable Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
     }
 }

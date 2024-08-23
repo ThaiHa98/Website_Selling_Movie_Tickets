@@ -30,12 +30,20 @@ namespace Shared.DTOs.MoviesView
         public string Address { get; set; }
         public string SubtitleTable_Id { get; set; }
         public string Date { get; set; }
+        public List<SubtitleTableModel> SubtitleTable { get; set; } // Đổi thành List
     }
 
     public class GenreViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class SubtitleTableModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string TimeSlot_Id { get; set; }
     }
 
 }

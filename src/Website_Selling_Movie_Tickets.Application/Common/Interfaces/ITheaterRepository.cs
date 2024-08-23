@@ -17,6 +17,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<Response<Theater>> Create(Theater entity);
         Task<Response<Theater>> Update(Theater entity);
         Task<Response<Theater>> Delete(int id);
+        Task<List<Theater>> GetTheaterName(int id, string address);
 
     }
 }

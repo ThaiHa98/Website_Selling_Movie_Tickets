@@ -13,22 +13,22 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
     {
         public CreateTicketRequestValidator() 
         {
-            RuleFor(request => request.TicketModel.User_Id)
+            RuleFor(request => request.User_Id)
                 .NotEmpty().WithMessage("User_Id cannot be null");
 
-            RuleFor(request => request.TicketModel.Movies_Id)
+            RuleFor(request => request.Movies_Id)
                 .NotEmpty().WithMessage("Movies_Id cannot be null");
 
-            RuleFor(request => request.TicketModel.TimeSlot_Id)
+            RuleFor(request => request.TimeSlot_Id)
                 .NotEmpty().WithMessage("TimeSlot_Id cannot be null");
 
-            RuleFor(request => request.TicketModel.ChairType_Id)
+            RuleFor(request => request.ChairType_Id)
                 .NotEmpty().WithMessage("ChairType_Id cannot be null");
 
-            RuleFor(request => request.TicketModel.ScreeningRoom_Id)
+            RuleFor(request => request.ScreeningRoom_Id)
                 .NotEmpty().WithMessage("ScreeningRoom_Id cannot be null");
 
-            RuleFor(request => request.TicketModel.Theaters_Id)
+            RuleFor(request => request.Theaters_Id)
                 .NotEmpty().WithMessage("Theaters_Id cannot be null");
         }
     }

@@ -17,12 +17,18 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
     {
         Task<List<Movie>> GetAll();
         Task<Pagination<Movie>> GetPagination(int pageIndex, int pageSize);
-        Task<MoviesViewModel> GetById(int id, DateTime premiere);
+        Task<List<TheaterViewModel>> GetPremiere(int id, DateTime premiere);
         Task<Response<Movie>> Create(Movie movie);
         Task<string> Update(Movie movie);
         Task<bool>Delete(Movie movie);
         Task<Movie> SearchByKeyAsync(string key);
         Task<byte[]> GetMovieImageBytes(int id);
         Task<List<MoviesViewModel>> SearchStatusAsync(string status);
+        Task<List<MoviesViewModel>> SearchIronfilmreleased(string status);
+        Task<MoviesViewModel> MoviesDetails(int id);
+        Task<List<string>> GetTheaterAddressesByMovieId(int id);
+        Task<List<TheaterViewModel>> GetTheaterDetails(int id, string address);
+        Task<List<SubtitleTable>> GetSubtitleTable(int id);
+
     }
 }

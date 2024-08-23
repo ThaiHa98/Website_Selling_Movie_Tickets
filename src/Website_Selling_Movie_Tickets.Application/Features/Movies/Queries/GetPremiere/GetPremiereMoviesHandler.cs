@@ -13,31 +13,29 @@ using Website_Selling_Movie_Tickets.Infrastructure.Persistence;
 
 namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetById
 {
-    public class GetByIdMoviesHandler : IRequestHandler<GetByIdMoviesQuery, MoviesViewModel>
+    public class GetPremiereMoviesHandler : IRequestHandler<GetPremiereMoviesQuery, List<TheaterViewModel>>
     {
         private readonly IMoviesRepository _moviesRepository;
-        private readonly DBContext _dbContext;
 
-        public GetByIdMoviesHandler(IMoviesRepository moviesRepository, DBContext dbContext)
+        public GetPremiereMoviesHandler(IMoviesRepository moviesRepository)
         {
-            _dbContext = dbContext;
             _moviesRepository = moviesRepository;
         }
 
-        public async Task<MoviesViewModel> Handle(GetByIdMoviesQuery request, CancellationToken cancellationToken)
+        public async Task<List<TheaterViewModel>> Handle(GetPremiereMoviesQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _moviesRepository.GetById(request.Id, request.premiere);
-                if (result == null)
+                var result = await _moviesRepository.GetPremiere(request.Id, request.premiere);
+                if (result == null || !result.Any())
                 {
-                    throw new Exception("Data not found");
+                    throw new Exception("No theaters found for the specified movie and premiere date.");
                 }
                 return result;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                throw new ApplicationException("Screening room not found", ex);
+                throw new ApplicationException("An error occurred while retrieving theaters.", ex);
             }
         }
     }

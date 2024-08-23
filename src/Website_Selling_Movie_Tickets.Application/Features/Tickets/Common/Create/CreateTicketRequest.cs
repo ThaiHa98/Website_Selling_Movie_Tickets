@@ -11,12 +11,20 @@ using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 
 namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Create
 {
-    public class CreateTicketRequest : IRequest<Response<TicketModel>>
+    public class CreateTicketRequest : IRequest<Response<Ticket>>
     {
-        public TicketModel TicketModel { get;}
-        public CreateTicketRequest(TicketModel ticketModel)
-        {
-            TicketModel = ticketModel ?? throw new ArgumentNullException(nameof(ticketModel));
-        }
+        public string Id { get; set; }
+        public int User_Id { get; set; }
+        public string User_Name { get; set; }
+        public int Movies_Id { get; set; }
+        public int TimeSlot_Id { get; set; }
+        public int ChairType_Id { get; set; }
+        public decimal ToatalPrice { get; set; }
+        public int ScreeningRoom_Id { get; set; }
+        public int Theaters_Id { get; set; }
+        public List<int> Seat_Id { get; set; }
+        public string SeatNumber { get; set; }
+        public int SubtitleTable_Id { get; set; }
+        public StatusTicket Status { get; set; }
     }
 }

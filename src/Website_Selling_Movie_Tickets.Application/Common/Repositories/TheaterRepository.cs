@@ -174,6 +174,11 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return new Pagination<Theater>(pageIndex, pageSize, totalRecords, items);
         }
 
+        public Task<List<Theater>> GetTheaterName(int id, string address)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Response<Theater>> Update(Theater entity)
         {
             _dbContext.Theaters.Update(entity);

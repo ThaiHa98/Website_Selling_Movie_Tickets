@@ -69,108 +69,76 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return await _dbContext.Movies.ToListAsync();
         }
 
-        public async Task<MoviesViewModel> GetById(int id, DateTime premiere)
+        public async Task<List<TheaterViewModel>> GetPremiere(int id, DateTime premiere)
         {
             try
             {
+                // Lấy thông tin bộ phim dựa trên id và premiere
                 var movie = await _dbContext.Movies
                     .Where(x => x.Id == id && x.Premiere == premiere)
                     .Select(x => new
                     {
-                        x.Id,
-                        x.Name,
-                        x.Image,
-                        x.GenreId,
-                        x.RunningTime,
-                        x.Premiere,
-                        x.Language,
-                        x.Rated,
-                        x.Description,
-                        x.Director,
-                        x.Actors,
-                        x.Status,
-                        TheaterIds = x.TheatersIds
+                        TheaterIds = x.TheatersIds // Lấy danh sách TheaterIds
                     })
                     .FirstOrDefaultAsync();
 
-                if (movie == null)
+                // Nếu không tìm thấy phim thì trả về danh sách rỗng
+                if (movie == null || string.IsNullOrEmpty(movie.TheaterIds))
                 {
-                    return new MoviesViewModel
-                    {
-                        Id = id,
-                        Name = "Movie not found",
-                        Premiere = premiere
-                    };
+                    return new List<TheaterViewModel>();
                 }
 
-                var genre = await _dbContext.Genres
-                    .Where(g => g.Id == movie.GenreId)
-                    .Select(g => new GenreViewModel
+                // Xử lý TheaterIds
+                var theaterIds = movie.TheaterIds
+                    .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out var parsedId) ? (int?)parsedId : null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+
+                // Truy vấn danh sách các rạp chiếu dựa trên TheaterIds
+                var theaterViewModels = await _dbContext.Theaters
+                    .Where(x => theaterIds.Contains(x.Id))
+                    .Select(x => new TheaterViewModel
                     {
-                        Id = g.Id,
-                        Name = g.Name
+                        Id = x.Id,
+                        Name = x.Name,
+                        Address = x.Address,
+                        SubtitleTable_Id = x.SubtitleTable_Id,
+                        Date = x.Date
                     })
-                    .FirstOrDefaultAsync();
+                    .ToListAsync();
 
-                var theaterViewModels = new List<TheaterViewModel>();
-                var theaterIds = new List<int>();
+                // Xử lý và truy vấn các SubtitleTable_Id
+                foreach (var theater in theaterViewModels)
+                {
+                    var subtitleIds = theater.SubtitleTable_Id
+                        .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id => int.TryParse(id, out var parsedId) ? (int?)parsedId : null)
+                        .Where(id => id.HasValue)
+                        .Select(id => id.Value)
+                        .ToList();
 
-                try
-                {
-                    if (!string.IsNullOrEmpty(movie.TheaterIds))
-                    {
-                        theaterIds = movie.TheaterIds.Split(' ')
-                            .Select(id => int.TryParse(id.Trim(), out var parsedId) ? parsedId : (int?)null)
-                            .Where(id => id.HasValue)
-                            .Select(id => id.Value)
-                            .ToList();
-                    }
-                }
-                catch (FormatException ex)
-                {
-                    throw new ApplicationException("An error occurred while parsing theater IDs.", ex);
-                }
-
-                if (theaterIds.Any())
-                {
-                    theaterViewModels = await _dbContext.Theaters
-                        .Where(x => theaterIds.Contains(x.Id))
-                        .Select(x => new TheaterViewModel
+                    var subtitleTables = await _dbContext.SubtitleTables
+                        .Where(st => subtitleIds.Contains(st.Id))
+                        .Select(st => new Shared.DTOs.MoviesView.SubtitleTableModel
                         {
-                            Id = x.Id,
-                            Name = x.Name,
-                            Address = x.Address,
-                            SubtitleTable_Id = x.SubtitleTable_Id,
-                            Date = x.Date
+                            Id = st.Id,
+                            Name = st.Name,
+                            TimeSlot_Id = st.TimeSlot_Id
                         })
                         .ToListAsync();
+
+                    theater.SubtitleTable = subtitleTables;
                 }
 
-                var viewModel = new MoviesViewModel
-                {
-                    Id = movie.Id,
-                    Name = movie.Name,
-                    Image = movie.Image,
-                    GenreId = genre?.Id ?? 0,
-                    Genre_Name = genre?.Name ?? "Unknown",
-                    RunningTime = movie.RunningTime,
-                    Premiere = movie.Premiere,
-                    Language = movie.Language,
-                    Rated = movie.Rated,
-                    Description = movie.Description,
-                    Director = movie.Director,
-                    Actors = movie.Actors,
-                    Theaters = theaterViewModels
-                };
-
-                return viewModel;
+                return theaterViewModels;
             }
             catch (Exception ex)
             {
-                throw new ApplicationException("An error occurred while retrieving movie details.", ex);
+                throw new ApplicationException("An error occurred while retrieving theaters.", ex);
             }
         }
-
 
         public async Task<byte[]> GetMovieImageBytes(int id)
         {
@@ -238,13 +206,10 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
         {
             try
             {
-                // Chuyển đổi status từ chuỗi thành enum nếu cần
-                if (!Enum.TryParse(status, true, out StatusMovie statusEnum))
+                if (!Enum.TryParse<StatusMovie>(status, out var statusEnum))
                 {
                     throw new ArgumentException("Invalid status value");
                 }
-
-                // Lấy tất cả các phim với trạng thái nhất định
                 var movies = await _dbContext.Movies
                     .Where(x => x.Status == statusEnum)
                     .Select(x => new
@@ -265,13 +230,6 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                     })
                     .ToListAsync();
 
-                // Nếu không có phim nào với trạng thái này
-                if (movies == null || !movies.Any())
-                {
-                    return new List<MoviesViewModel>(); // Trả về danh sách rỗng
-                }
-
-                // Danh sách kết quả
                 var movieViewModels = new List<MoviesViewModel>();
 
                 foreach (var movie in movies)
@@ -286,37 +244,33 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                         .FirstOrDefaultAsync();
 
                     var theaterViewModels = new List<TheaterViewModel>();
-                    var theaterIds = new List<int>();
 
-                    try
+                    if (!string.IsNullOrEmpty(movie.TheaterIds))
                     {
-                        if (!string.IsNullOrEmpty(movie.TheaterIds))
-                        {
-                            theaterIds = movie.TheaterIds.Split(' ')
-                                .Select(id => int.TryParse(id.Trim(), out var parsedId) ? parsedId : (int?)null)
-                                .Where(id => id.HasValue)
-                                .Select(id => id.Value)
-                                .ToList();
-                        }
-                    }
-                    catch (FormatException ex)
-                    {
-                        throw new ApplicationException("An error occurred while parsing theater IDs.", ex);
-                    }
-
-                    if (theaterIds.Any())
-                    {
-                        theaterViewModels = await _dbContext.Theaters
-                            .Where(x => theaterIds.Contains(x.Id))
-                            .Select(x => new TheaterViewModel
+                        var theaterIds = movie.TheaterIds
+                            .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(id =>
                             {
-                                Id = x.Id,
-                                Name = x.Name,
-                                Address = x.Address,
-                                SubtitleTable_Id = x.SubtitleTable_Id,
-                                Date = x.Date
+                                return int.TryParse(id, out var parsedId) ? parsedId : (int?)null;
                             })
-                            .ToListAsync();
+                            .Where(id => id.HasValue)
+                            .Select(id => id.Value)
+                            .ToList();
+
+                        if (theaterIds.Any())
+                        {
+                            theaterViewModels = await _dbContext.Theaters
+                                .Where(x => theaterIds.Contains(x.Id))
+                                .Select(x => new TheaterViewModel
+                                {
+                                    Id = x.Id,
+                                    Name = x.Name,
+                                    Address = x.Address,
+                                    SubtitleTable_Id = x.SubtitleTable_Id,
+                                    Date = x.Date
+                                })
+                                .ToListAsync();
+                        }
                     }
 
                     var viewModel = new MoviesViewModel
@@ -358,6 +312,349 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             else
             {
                 return "Update Failed";
+            }
+        }
+
+        public async Task<List<MoviesViewModel>> SearchIronfilmreleased(string status)
+        {
+            try
+            {
+                if (!Enum.TryParse<StatusMovie>(status, out var statusEnum))
+                {
+                    throw new ArgumentException("Invalid status value");
+                }
+                var movies = await _dbContext.Movies
+                    .Where(x => x.Status == statusEnum)
+                    .Take(3)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Name,
+                        x.Image,
+                        x.GenreId,
+                        x.RunningTime,
+                        x.Premiere,
+                        x.Language,
+                        x.Rated,
+                        x.Description,
+                        x.Director,
+                        x.Actors,
+                        x.Status,
+                        TheaterIds = x.TheatersIds
+                    })
+                    .ToListAsync();
+
+                var movieViewModels = new List<MoviesViewModel>();
+
+                foreach (var movie in movies)
+                {
+                    var genre = await _dbContext.Genres
+                        .Where(g => g.Id == movie.GenreId)
+                        .Select(g => new GenreViewModel
+                        {
+                            Id = g.Id,
+                            Name = g.Name
+                        })
+                        .FirstOrDefaultAsync();
+
+                    var theaterViewModels = new List<TheaterViewModel>();
+
+                    if (!string.IsNullOrEmpty(movie.TheaterIds))
+                    {
+                        var theaterIds = movie.TheaterIds
+                            .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(id =>
+                            {
+                                return int.TryParse(id, out var parsedId) ? parsedId : (int?)null;
+                            })
+                            .Where(id => id.HasValue)
+                            .Select(id => id.Value)
+                            .ToList();
+
+                        if (theaterIds.Any())
+                        {
+                            theaterViewModels = await _dbContext.Theaters
+                                .Where(x => theaterIds.Contains(x.Id))
+                                .Select(x => new TheaterViewModel
+                                {
+                                    Id = x.Id,
+                                    Name = x.Name,
+                                    Address = x.Address,
+                                    SubtitleTable_Id = x.SubtitleTable_Id,
+                                    Date = x.Date
+                                })
+                                .ToListAsync();
+                        }
+                    }
+
+                    var viewModel = new MoviesViewModel
+                    {
+                        Id = movie.Id,
+                        Name = movie.Name,
+                        Image = movie.Image,
+                        GenreId = genre?.Id ?? 0,
+                        Genre_Name = genre?.Name ?? "Unknown",
+                        RunningTime = movie.RunningTime,
+                        Premiere = movie.Premiere,
+                        Language = movie.Language,
+                        Rated = movie.Rated,
+                        Description = movie.Description,
+                        Director = movie.Director,
+                        Actors = movie.Actors,
+                        Theaters = theaterViewModels
+                    };
+
+                    movieViewModels.Add(viewModel);
+                }
+
+                return movieViewModels;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while retrieving movie details.", ex);
+            }
+        }
+
+        public async Task<MoviesViewModel> MoviesDetails(int id)
+        {
+            try
+            {
+                var movie = await _dbContext.Movies
+                    .Where(x => x.Id == id)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Name,
+                        x.Image,
+                        x.GenreId,
+                        x.RunningTime,
+                        x.Premiere,
+                        x.Language,
+                        x.Rated,
+                        x.Description,
+                        x.Director,
+                        x.Actors,
+                        x.Status,
+                        TheaterIds = x.TheatersIds
+                    })
+                    .FirstOrDefaultAsync();
+                if (movie == null)
+                {
+                    return new MoviesViewModel
+                    {
+                        Id = id,
+                        Name = "Movie not founf"
+                    };
+                }
+
+                var genre = await _dbContext.Genres
+                    .Where(g => g.Id == movie.GenreId)
+                    .Select(g => new GenreViewModel
+                    {
+                        Id = g.Id,
+                        Name = g.Name,
+                    })
+                    .FirstOrDefaultAsync();
+
+                var theaterViewModels = new List<TheaterViewModel>();
+
+                if (!string.IsNullOrEmpty(movie.TheaterIds))
+                {
+                    var theaterIds = movie.TheaterIds
+                        .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id =>
+                        {
+                            return int.TryParse(id, out var parsedId) ? parsedId : (int?)null;
+                        })
+                        .Where(id => id.HasValue)
+                        .Select(id => id.Value)
+                        .ToList();
+                    if (theaterIds.Any())
+                    {
+                        theaterViewModels = await _dbContext.Theaters
+                            .Where(x => theaterIds.Contains(x.Id))
+                            .Select(x => new TheaterViewModel
+                            {
+                                Id = x.Id,
+                                Name = x.Name,
+                                Address = x.Address,
+                                SubtitleTable_Id = x.SubtitleTable_Id,
+                                Date = x.Date,
+                            })
+                            .ToListAsync();
+                    }
+                }
+                var viewModel = new MoviesViewModel
+                {
+                    Id = movie.Id,
+                    Name = movie.Name,
+                    Image = movie.Image,
+                    GenreId = genre?.Id ?? 0,
+                    Genre_Name = genre?.Name ?? "Unknown",
+                    RunningTime = movie.RunningTime,
+                    Premiere = movie.Premiere,
+                    Language = movie.Language,
+                    Rated = movie.Rated,
+                    Description = movie.Description,
+                    Director = movie.Director,
+                    Actors = movie.Actors,
+                    Theaters = theaterViewModels
+                };
+                return viewModel;
+            }
+            catch (Exception ex) 
+            {
+                throw new ApplicationException("An error occurred while retrieving movie details.", ex);
+            }
+        }
+
+        public async Task<List<string>> GetTheaterAddressesByMovieId(int id)
+        {
+            try
+            {
+                var movie = await _dbContext.Movies
+                    .Where(x => x.Id == id)
+                    .Select(x => new
+                    {
+                        x.TheatersIds
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (movie == null || string.IsNullOrEmpty(movie.TheatersIds))
+                {
+                    return new List<string>(); // Trả về danh sách trống nếu phim không tồn tại hoặc không có thông tin rạp
+                }
+
+                var theaterIds = movie.TheatersIds
+                    .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id =>
+                    {
+                        return int.TryParse(id, out var parsedId) ? parsedId : (int?)null;
+                    })
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+
+                if (!theaterIds.Any())
+                {
+                    return new List<string>(); // Trả về danh sách trống nếu không có ID rạp hợp lệ
+                }
+
+                var addresses = await _dbContext.Theaters
+                    .Where(x => theaterIds.Contains(x.Id))
+                    .Select(x => x.Address)
+                    .Where(address => address != null) // Loại bỏ địa chỉ null
+                    .Distinct() // Loại bỏ giá trị trùng lặp
+                    .ToListAsync();
+
+                return addresses;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while retrieving theater addresses.", ex);
+            }
+        }
+
+        public async Task<List<TheaterViewModel>> GetTheaterDetails(int id, string address)
+        {
+            try
+            {
+                // Lấy thông tin phim theo Id
+                var movie = await _dbContext.Movies
+                    .Where(x => x.Id == id)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Name,
+                        TheaterIds = x.TheatersIds
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (movie == null)
+                {
+                    throw new KeyNotFoundException("Movie not found with the specified Id.");
+                }
+
+                var theaterDetails = new List<TheaterViewModel>();
+
+                // Lấy danh sách chi tiết rạp dựa trên TheaterIds và address
+                if (!string.IsNullOrEmpty(movie.TheaterIds))
+                {
+                    var theaterIds = movie.TheaterIds
+                        .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id => int.TryParse(id, out var parsedId) ? parsedId : (int?)null)
+                        .Where(id => id.HasValue)
+                        .Select(id => id.Value)
+                        .ToList();
+
+                    if (theaterIds.Any())
+                    {
+                        theaterDetails = await _dbContext.Theaters
+                            .Where(t => theaterIds.Contains(t.Id) && t.Address == address)
+                            .Select(t => new TheaterViewModel
+                            {
+                                Id = t.Id,
+                                Name = t.Name,
+                                Address = t.Address,
+                                SubtitleTable_Id = t.SubtitleTable_Id,
+                                Date = t.Date
+                            })
+                            .ToListAsync();
+                    }
+                }
+
+                return theaterDetails;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while retrieving theater details.", ex);
+            }
+        }
+
+        public async Task<List<SubtitleTable>> GetSubtitleTable(int id)
+        {
+            try
+            {
+                // Lấy thông tin movie dựa trên Id
+                var movie = await _dbContext.Movies
+                    .Where(x => x.Id == id)
+                    .Select(x => new
+                    {
+                        x.TheatersIds,
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (movie == null || string.IsNullOrEmpty(movie.TheatersIds))
+                {
+                    return new List<SubtitleTable>(); // Trả về danh sách trống nếu phim không tồn tại hoặc không có thông tin rạp
+                }
+
+                // Lấy danh sách các ID rạp từ TheatersIds
+                var theaterIds = movie.TheatersIds
+                    .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out var parsedId) ? parsedId : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+
+                if (!theaterIds.Any())
+                {
+                    return new List<SubtitleTable>(); // Trả về danh sách trống nếu không có ID rạp hợp lệ
+                }
+
+                // Lấy danh sách SubtitleTable dựa trên danh sách các ID rạp
+                var subtitleTables = await _dbContext.Theaters
+                    .Where(x => theaterIds.Contains(x.Id)) // Lọc các rạp dựa trên danh sách theaterIds
+                    .SelectMany(x => _dbContext.SubtitleTables
+                        .Where(st => st.Id.ToString() == x.SubtitleTable_Id)) // Lấy danh sách SubtitleTable tương ứng với SubtitleTable_Id của rạp
+                    .Distinct()
+                    .ToListAsync();
+
+                return subtitleTables;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while retrieving subtitle tables.", ex);
             }
         }
     }

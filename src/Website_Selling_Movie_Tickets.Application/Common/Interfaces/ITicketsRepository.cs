@@ -14,7 +14,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<List<Ticket>> GetAllTickets();
         Task<Pagination<Ticket>> GetAllTicketsPagination(int pageIndex, int pageSize);
         Task<Ticket> GetTicketsById(string id);
-        Task<Response<TicketModel>> AddAsync (TicketModel ticketModel);
+        Task<Response<List<Ticket>>> AddAsync(List<Ticket> tickets);
         Task<Response<Ticket>> UpdateAsync (Ticket ticket);
         Task<Response<Ticket>> DeleteAsync (string id);
     }

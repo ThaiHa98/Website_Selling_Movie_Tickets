@@ -12,6 +12,8 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities.Enum
         InProgress,  // Vé đang được xử lý
         Resolved,    // Vé đã được giải quyết
         Closed,      // Vé đã được đóng
-        Reopened     // Vé đã được mở lại
+        Reopened,    // Vé đã được mở lại
+        Paid,        // Vé đã thanh toán
+        Unpaid       // Vé chưa thanh toán
     }
 }

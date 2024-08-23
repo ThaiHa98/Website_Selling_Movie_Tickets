@@ -33,16 +33,8 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
                 .HasConversion<string>();
 
             modelBuilder.Entity<Ticket>()
-                .Property(x => x.ChairType_Price)
-                .HasColumnType("decimal(18,2)");
-
-            modelBuilder.Entity<Ticket>()
                 .Property(x => x.Status)
                 .HasConversion<string>();
-
-            modelBuilder.Entity<Ticket>()
-                .Property(x => x.ChairType_Price)
-                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<ChairType>()
                 .Property(x => x.Price)
