@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
+using Shared.DTOs.Booking;
 using Shared.DTOs.MoviesView;
 using Shared.DTOs.SearchStatusMovies;
 using Shared.DTOs.Theater;
@@ -28,7 +29,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
     {
         private readonly DBContext _dbContext;
         private readonly IConfiguration _configuration;
-        public MoviesRepository(DBContext dbContext, IConfiguration configuration) 
+        public MoviesRepository(DBContext dbContext, IConfiguration configuration)
         {
             _configuration = configuration;
             _dbContext = dbContext;
@@ -187,7 +188,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                                   .Skip((pageIndex - 1) * pageSize)
                                   .Take(pageSize)
                                   .ToListAsync();
-            return new Pagination<Movie>(pageIndex, totalRecords,totalRecords, items);
+            return new Pagination<Movie>(pageIndex, totalRecords, totalRecords, items);
         }
 
         public async Task<Movie> SearchByKeyAsync(string key)
@@ -502,7 +503,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                 };
                 return viewModel;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new ApplicationException("An error occurred while retrieving movie details.", ex);
             }
@@ -655,6 +656,114 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             catch (Exception ex)
             {
                 throw new ApplicationException("An error occurred while retrieving subtitle tables.", ex);
+            }
+        }
+
+        public async Task<List<BookingModel>> GetBooking(int movie_Id, string theater_Address, int subtitleTable_Id)
+        {
+            try
+            {
+                // Bước 1: Lấy danh sách các ID rạp chiếu phim cho bộ phim
+                var movie = await _dbContext.Movies
+                    .Where(x => x.Id == movie_Id)
+                    .Select(x => x.TheatersIds)
+                    .FirstOrDefaultAsync();
+
+                if (string.IsNullOrEmpty(movie))
+                {
+                    return new List<BookingModel>();
+                }
+
+                // Chuyển đổi chuỗi TheatersIds thành danh sách các số nguyên
+                var theaterIds = movie
+                    .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out var parsedId) ? parsedId : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+
+                if (!theaterIds.Any())
+                {
+                    return new List<BookingModel>();
+                }
+
+                // Bước 2: Lấy thông tin các rạp chiếu phim với địa chỉ cụ thể
+                var theaters = await _dbContext.Theaters
+                    .Where(x => theaterIds.Contains(x.Id) && x.Address == theater_Address)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Name
+                    })
+                    .ToListAsync();
+
+                if (!theaters.Any())
+                {
+                    return new List<BookingModel>();
+                }
+
+                // Bước 3: Lấy thông tin các subtitleTable và TimeSlotIds
+                var subtitleTable = await _dbContext.SubtitleTables
+                    .Where(x => x.Id == subtitleTable_Id)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Name,
+                        // Giả sử TimeSlotIds là một chuỗi phân cách bằng dấu phẩy
+                        TimeSlotIds = x.TimeSlot_Id // Nếu TimeSlotIds đã là danh sách int, không cần chuyển đổi thêm
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (subtitleTable == null)
+                {
+                    return new List<BookingModel>();
+                }
+
+                // Chuyển đổi chuỗi TimeSlotIds thành danh sách các số nguyên
+                var timeSlotIds = subtitleTable.TimeSlotIds
+                    .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out var parsedId) ? parsedId : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+
+                if (!timeSlotIds.Any())
+                {
+                    return new List<BookingModel>();
+                }
+
+                // Bước 4: Lấy thông tin các TimeSlot
+                var timeSlots = await _dbContext.TimeSlots
+                    .Where(x => timeSlotIds.Contains(x.Id))
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.StartTime
+                    })
+                    .ToListAsync();
+
+                // Bước 5: Kết hợp thông tin và tạo danh sách BookingModel
+                var bookingModels = (from theater in theaters
+                                     select new BookingModel
+                                     {
+                                         Theater_Id = theater.Id,
+                                         Theater_Name = theater.Name,
+                                         SubtitleTable_Id = subtitleTable.Id,
+                                         SubtitleTable_Name = subtitleTable.Name,
+                                         TimeSlots = timeSlots
+                                             .Select(ts => new TimeSlotModel
+                                             {
+                                                 Id = ts.Id,
+                                                 StartTime = ts.StartTime
+                                             })
+                                             .ToList()
+                                     }).ToList();
+
+                return bookingModels;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while retrieving booking information.", ex);
             }
         }
     }

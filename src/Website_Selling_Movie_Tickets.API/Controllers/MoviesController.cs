@@ -9,6 +9,7 @@ using Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Create;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Delete;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Update;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetAll;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetBooking;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetById;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetImage;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetMoviesDetails;
@@ -501,6 +502,42 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     httpStatusCode = (int)HttpStatusCode.OK,
                     totalCount = result.Count,
                     message = "GetSubtitleTable Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region getBooking
+        [HttpGet("getBooking")]
+        public async Task<IActionResult> getBooking(int movie_Id, string theater_Address, int subtitleTable_Id)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} getBooking");
+                var response = new GetBookingQuery
+                {
+                    movie_Id = movie_Id,
+                    theater_Address = theater_Address,
+                    subtitleTable_Id = subtitleTable_Id
+                };
+                var result = await _mediator.Send(response);
+                _logger.Information($"End {Methods} getBooking reponse: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    totalCount = result.Count,
+                    message = "getBooking Successfully"
                 });
             }
             catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
+using Shared.DTOs.Booking;
 using Shared.DTOs.MoviesView;
 using Shared.DTOs.SearchStatusMovies;
 using Shared.SeedWork;
@@ -29,6 +30,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<List<string>> GetTheaterAddressesByMovieId(int id);
         Task<List<TheaterViewModel>> GetTheaterDetails(int id, string address);
         Task<List<SubtitleTable>> GetSubtitleTable(int id);
+        Task<List<BookingModel>> GetBooking(int movie_Id, string theater_Address, int subtitleTable_Id);
 
     }
 }
