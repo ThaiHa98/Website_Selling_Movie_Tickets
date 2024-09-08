@@ -15,6 +15,7 @@ using System.IO;
 using System.Text.Json;
 using Website_Selling_Movie_Tickets.Domain.Entities.Enum;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 
 
 namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Create
@@ -24,6 +25,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
         private readonly IMoviesRepository _moviesRepository;
         private readonly DBContext _dbContext;
         private readonly IConfiguration _configuration;
+        private const string USER_CONTENT_FOLDER_NAME = "user-forder";
         public CreateMovieHandler(IMoviesRepository moviesRepository, DBContext dbContext, IConfiguration configuration)
         {
             _moviesRepository = moviesRepository ?? throw new ArgumentNullException(nameof(moviesRepository));
@@ -122,5 +124,46 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
                 throw new Exception($"An error occurred while saving the image: {ex.Message}");
             }
         }
+
+        //private async Task<string> SaveFile(IFormFile file)
+        //{
+        //    try
+        //    {
+        //        // Lấy tên tệp gốc từ ContentDisposition và tạo tên tệp mới với Guid để đảm bảo tính duy nhất
+        //        var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+        //        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
+
+        //        // Lấy BaseAddress từ configuration
+        //        var baseFolder = _configuration.GetValue<string>("BaseAddress");
+
+        //        // Tạo thư mục dữ liệu hiện tại theo ngày
+        //        string currentDataFolder = DateTime.Now.ToString("dd-MM-yyyy");
+        //        var movieFolder = Path.Combine(baseFolder, "Movie");
+        //        var dateFolder = Path.Combine(movieFolder, currentDataFolder);
+
+        //        // Tạo thư mục nếu chưa tồn tại
+        //        if (!Directory.Exists(dateFolder))
+        //        {
+        //            Directory.CreateDirectory(dateFolder);
+        //        }
+
+        //        // Kết hợp đường dẫn với tên file để tạo đường dẫn đầy đủ
+        //        var filePath = Path.Combine(dateFolder, fileName);
+
+        //        // Mở file stream để ghi dữ liệu vào đường dẫn đã xác định
+        //        using var output = new FileStream(filePath, FileMode.Create);
+
+        //        // Sao chép nội dung stream của file vào file đích
+        //        await file.OpenReadStream().CopyToAsync(output);
+
+        //        // Trả về đường dẫn đầy đủ của file lưu trữ
+        //        return $"/Movie/{currentDataFolder}/{fileName}";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Bắt và ném lại bất kỳ ngoại lệ nào xảy ra
+        //        throw new ApplicationException("An error occurred while saving the file.", ex);
+        //    }
+        //}
     }
 }

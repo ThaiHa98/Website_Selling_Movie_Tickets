@@ -12,6 +12,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetT
     public class GetTheaterNamesQueryHandler : IRequestHandler<GetTheaterNamesQuery, List<TheaterViewModel>>
     {
         private readonly IMoviesRepository _moviesRepository;
+
         public GetTheaterNamesQueryHandler(IMoviesRepository moviesRepository)
         {
             _moviesRepository = moviesRepository;
@@ -24,7 +25,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetT
                 var result = await _moviesRepository.GetTheaterDetails(request.Id, request.address);
                 return result;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new ApplicationException($"An error occurred while processing GetTheaterName: {ex.Message}", ex);
             }

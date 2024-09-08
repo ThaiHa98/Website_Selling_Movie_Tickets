@@ -7,7 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Shared.DTOs.Booking;
 using Shared.DTOs.MoviesView;
 using Shared.DTOs.SearchStatusMovies;
+using Shared.DTOs.SubtitleTables;
 using Shared.DTOs.Theater;
+using Shared.DTOs.TimeSlot;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -576,32 +578,52 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                     throw new KeyNotFoundException("Movie not found with the specified Id.");
                 }
 
-                var theaterDetails = new List<TheaterViewModel>();
+                // In ra giá trị để kiểm tra
+                Console.WriteLine("Movie Id: " + id);
+                Console.WriteLine("Address: " + address);
+                Console.WriteLine("TheaterIds: " + movie.TheaterIds);
 
-                // Lấy danh sách chi tiết rạp dựa trên TheaterIds và address
+                // Khai báo và chuyển TheaterIds thành danh sách các Id rạp
+                var theaterIds = new List<int>();
                 if (!string.IsNullOrEmpty(movie.TheaterIds))
                 {
-                    var theaterIds = movie.TheaterIds
+                    theaterIds = movie.TheaterIds
                         .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(id => int.TryParse(id, out var parsedId) ? parsedId : (int?)null)
                         .Where(id => id.HasValue)
                         .Select(id => id.Value)
                         .ToList();
+                }
 
-                    if (theaterIds.Any())
-                    {
-                        theaterDetails = await _dbContext.Theaters
-                            .Where(t => theaterIds.Contains(t.Id) && t.Address == address)
-                            .Select(t => new TheaterViewModel
-                            {
-                                Id = t.Id,
-                                Name = t.Name,
-                                Address = t.Address,
-                                SubtitleTable_Id = t.SubtitleTable_Id,
-                                Date = t.Date
-                            })
-                            .ToListAsync();
-                    }
+                // In ra giá trị để kiểm tra
+                Console.WriteLine("TheaterIds List: " + string.Join(", ", theaterIds));
+
+                var theaterDetails = new List<TheaterViewModel>();
+
+                // Nếu có các TheaterIds hợp lệ
+                if (theaterIds.Any())
+                {
+                    // Chuyển địa chỉ thành chữ thường và loại bỏ khoảng trắng thừa
+                    address = address.Trim().ToLower();
+
+                    theaterDetails = await _dbContext.Theaters
+                        .Where(t => theaterIds.Contains(t.Id) && t.Address.Trim().ToLower().Contains(address.ToLower()))
+                        .Select(t => new TheaterViewModel
+                        {
+                            Id = t.Id,
+                            Name = t.Name,
+                            Address = t.Address,
+                            SubtitleTable_Id = t.SubtitleTable_Id,
+                            Date = t.Date
+                        })
+                        .ToListAsync();
+                }
+
+                // In ra kết quả để kiểm tra
+                Console.WriteLine("TheaterDetails Count: " + theaterDetails.Count);
+                foreach (var theater in theaterDetails)
+                {
+                    Console.WriteLine($"Id: {theater.Id}, Name: {theater.Name}, Address: {theater.Address}");
                 }
 
                 return theaterDetails;
@@ -612,13 +634,14 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             }
         }
 
-        public async Task<List<SubtitleTable>> GetSubtitleTable(int id)
+
+        public async Task<List<SubtitleTablesModel>> GetSubtitleTables(int movieId)
         {
             try
             {
                 // Lấy thông tin movie dựa trên Id
                 var movie = await _dbContext.Movies
-                    .Where(x => x.Id == id)
+                    .Where(x => x.Id == movieId)
                     .Select(x => new
                     {
                         x.TheatersIds,
@@ -627,10 +650,10 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 
                 if (movie == null || string.IsNullOrEmpty(movie.TheatersIds))
                 {
-                    return new List<SubtitleTable>(); // Trả về danh sách trống nếu phim không tồn tại hoặc không có thông tin rạp
+                    return new List<SubtitleTablesModel>(); // Trả về danh sách trống nếu phim không tồn tại hoặc không có thông tin rạp
                 }
 
-                // Lấy danh sách các ID rạp từ TheatersIds
+                // Lấy danh sách các ID rạp từ TheatersIds (client-side)
                 var theaterIds = movie.TheatersIds
                     .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(id => int.TryParse(id, out var parsedId) ? parsedId : (int?)null)
@@ -640,15 +663,34 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 
                 if (!theaterIds.Any())
                 {
-                    return new List<SubtitleTable>(); // Trả về danh sách trống nếu không có ID rạp hợp lệ
+                    return new List<SubtitleTablesModel>(); // Trả về danh sách trống nếu không có ID rạp hợp lệ
                 }
 
-                // Lấy danh sách SubtitleTable dựa trên danh sách các ID rạp
-                var subtitleTables = await _dbContext.Theaters
-                    .Where(x => theaterIds.Contains(x.Id)) // Lọc các rạp dựa trên danh sách theaterIds
-                    .SelectMany(x => _dbContext.SubtitleTables
-                        .Where(st => st.Id.ToString() == x.SubtitleTable_Id)) // Lấy danh sách SubtitleTable tương ứng với SubtitleTable_Id của rạp
+                // Lấy danh sách Theaters dựa trên danh sách các ID rạp (client-side)
+                var theaters = await _dbContext.Theaters
+                    .Where(x => theaterIds.Contains(x.Id))
+                    .ToListAsync();
+
+                var subtitleTableIds = theaters
+                    .SelectMany(x => x.SubtitleTable_Id
+                        .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries))
                     .Distinct()
+                    .ToList();
+
+                if (!subtitleTableIds.Any())
+                {
+                    return new List<SubtitleTablesModel>(); // Trả về danh sách trống nếu không có SubtitleTable_Id hợp lệ
+                }
+
+                // Lấy danh sách SubtitleTables dựa trên danh sách subtitleTableIds
+                var subtitleTables = await _dbContext.SubtitleTables
+                    .Where(st => subtitleTableIds.Contains(st.Id.ToString()))
+                    .Select(st => new SubtitleTablesModel
+                    {
+                        Id = st.Id,
+                        Name = st.Name,
+                        TimeSlot_Id = st.TimeSlot_Id
+                    })
                     .ToListAsync();
 
                 return subtitleTables;
@@ -764,6 +806,132 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             catch (Exception ex)
             {
                 throw new ApplicationException("An error occurred while retrieving booking information.", ex);
+            }
+        }
+
+        public async Task<string> LoadUserImage(int id)
+        {
+            try
+            {
+                var movie = await _dbContext.Movies
+                    .Where(x => x.Id == id)
+                    .FirstOrDefaultAsync();
+
+                if (movie == null)
+                {
+                    throw new Exception($"Không tìm thấy bộ phim nào với ID {id}");
+                }
+
+                // Trả về đường dẫn hình ảnh của bộ phim
+                return movie.Image;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Đã xảy ra lỗi khi lấy thông tin hình ảnh của bộ phim.", ex);
+            }
+        }
+
+        public async Task<List<ListTimeSlotModel>> GetTimeSlot(int movieId)
+        {
+            try
+            {
+                // Lấy thông tin movie dựa trên Id
+                var movie = await _dbContext.Movies
+                    .Where(x => x.Id == movieId)
+                    .Select(x => new
+                    {
+                        x.TheatersIds,
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (movie == null || string.IsNullOrEmpty(movie.TheatersIds))
+                {
+                    return new List<ListTimeSlotModel>(); // Trả về danh sách trống nếu phim không tồn tại hoặc không có thông tin rạp
+                }
+
+                // Lấy danh sách các ID rạp từ TheatersIds
+                var theaterIds = movie.TheatersIds
+                    .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id, out var parsedId) ? parsedId : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList();
+
+                if (!theaterIds.Any())
+                {
+                    return new List<ListTimeSlotModel>(); // Trả về danh sách trống nếu không có ID rạp hợp lệ
+                }
+
+                // Lấy danh sách Theaters dựa trên danh sách các ID rạp
+                var theaters = await _dbContext.Theaters
+                    .Where(x => theaterIds.Contains(x.Id))
+                    .ToListAsync();
+
+                var subtitleTableIds = theaters
+                    .SelectMany(x => x.SubtitleTable_Id
+                        .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                    .Distinct()
+                    .ToList();
+
+                if (!subtitleTableIds.Any())
+                {
+                    return new List<ListTimeSlotModel>(); // Trả về danh sách trống nếu không có SubtitleTable_Id hợp lệ
+                }
+
+                // Lấy danh sách SubtitleTables dựa trên danh sách subtitleTableIds
+                var subtitleTables = await _dbContext.SubtitleTables
+                    .Where(st => subtitleTableIds.Contains(st.Id.ToString()))
+                    .ToListAsync();
+
+                // Tách TimeSlotIds từ SubtitleTables
+                var subtitleTableTimeSlotIds = subtitleTables
+                    .Select(st => new
+                    {
+                        st.Id,
+                        st.Name,
+                        TimeSlotIds = st.TimeSlot_Id
+                            .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(id => int.TryParse(id, out var parsedId) ? parsedId : (int?)null)
+                            .Where(id => id.HasValue)
+                            .Select(id => id.Value)
+                            .ToList()
+                    })
+                    .ToList();
+
+                var timeSlotIds = subtitleTableTimeSlotIds
+                    .SelectMany(st => st.TimeSlotIds)
+                    .Distinct()
+                    .ToList();
+
+                if (!timeSlotIds.Any())
+                {
+                    return new List<ListTimeSlotModel>(); // Trả về danh sách trống nếu không có TimeSlot_Id hợp lệ
+                }
+
+                // Lấy danh sách TimeSlots dựa trên danh sách timeSlotIds
+                var timeSlots = await _dbContext.TimeSlots
+                    .Where(ts => timeSlotIds.Contains(ts.Id))
+                    .ToListAsync();
+
+                // Ánh xạ dữ liệu từ SubtitleTables và TimeSlots sang ListTimeSlotModel
+                var result = subtitleTableTimeSlotIds
+                    .SelectMany(st => timeSlots
+                        .Where(ts => st.TimeSlotIds.Contains(ts.Id))
+                        .Select(ts => new ListTimeSlotModel
+                        {
+                            Id = ts.Id,
+                            Name_SubtitleTable = st.Name,
+                            StartTime = ts.StartTime,
+                            EndTime = ts.EndTime,
+                            Date = ts.Date,
+                        }))
+                    .ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while retrieving time slots.", ex);
             }
         }
     }

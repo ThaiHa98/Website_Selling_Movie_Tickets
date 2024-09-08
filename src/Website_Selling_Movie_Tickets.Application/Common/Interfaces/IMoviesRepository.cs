@@ -4,6 +4,8 @@ using Microsoft.Data.SqlClient.Server;
 using Shared.DTOs.Booking;
 using Shared.DTOs.MoviesView;
 using Shared.DTOs.SearchStatusMovies;
+using Shared.DTOs.SubtitleTables;
+using Shared.DTOs.TimeSlot;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -21,7 +23,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<List<TheaterViewModel>> GetPremiere(int id, DateTime premiere);
         Task<Response<Movie>> Create(Movie movie);
         Task<string> Update(Movie movie);
-        Task<bool>Delete(Movie movie);
+        Task<bool> Delete(Movie movie);
         Task<Movie> SearchByKeyAsync(string key);
         Task<byte[]> GetMovieImageBytes(int id);
         Task<List<MoviesViewModel>> SearchStatusAsync(string status);
@@ -29,8 +31,9 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<MoviesViewModel> MoviesDetails(int id);
         Task<List<string>> GetTheaterAddressesByMovieId(int id);
         Task<List<TheaterViewModel>> GetTheaterDetails(int id, string address);
-        Task<List<SubtitleTable>> GetSubtitleTable(int id);
+        Task<List<SubtitleTablesModel>> GetSubtitleTables(int movieId);
         Task<List<BookingModel>> GetBooking(int movie_Id, string theater_Address, int subtitleTable_Id);
-
+        Task<string> LoadUserImage(int id);
+        Task<List<ListTimeSlotModel>> GetTimeSlot(int movieId);
     }
 }

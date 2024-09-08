@@ -12,11 +12,13 @@ using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetAll;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetBooking;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetById;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetImage;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetListTimeSlot;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetMoviesDetails;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetPagination;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetSubtitleTable;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetTheaterAddressesByMovieId;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetTheaterNames;
+using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.LoadUserImage;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.SearchByKey;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.SearchIronfilmreleased;
 using Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.SearchStatus;
@@ -538,6 +540,72 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     httpStatusCode = (int)HttpStatusCode.OK,
                     totalCount = result.Count,
                     message = "getBooking Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region LoadUserImage
+        [HttpGet("LoadUserImage")]
+        public async Task<IActionResult> LoadUserImage(int Id)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} LoadUserImage");
+                var response = new LoadUserImageMoviesQuery
+                {
+                    Id = Id,
+                };
+                var result = await _mediator.Send(response);
+                _logger.Information($"End {Methods} LoadUserImage reponse: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    message = "LoadUserImage Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResultBase
+                {
+                    success = false,
+                    httpStatusCode = (int)HttpStatusCode.BadRequest,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region GetTimeSlot
+        [HttpGet("GetTimeSlot")]
+        public async Task<IActionResult> GetTimeSlot(int movie_id)
+        {
+            try
+            {
+                _logger.Information($"Begin {Methods} GetTimeSlot");
+                var response = new GetListTimeSlotQuery
+                {
+                    movie_Id = movie_id
+                };
+                var result = await _mediator.Send(response);
+                _logger.Information($"End {Methods} GetTimeSlot reponse: {JsonConvert.SerializeObject(result)}");
+                return Ok(new ApiResultBase
+                {
+                    data = result,
+                    success = true,
+                    httpStatusCode = (int)HttpStatusCode.OK,
+                    message = "GetTimeSlot Successfully"
                 });
             }
             catch (Exception ex)

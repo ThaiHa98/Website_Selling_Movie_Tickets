@@ -6,6 +6,6 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Upd
     public class UpdateTheaterRequest : IRequest<Theater>
     {
         public int Id { get; set; }
-        public string Date { get; set; }
+        public string Address { get; set; }
     }
 }

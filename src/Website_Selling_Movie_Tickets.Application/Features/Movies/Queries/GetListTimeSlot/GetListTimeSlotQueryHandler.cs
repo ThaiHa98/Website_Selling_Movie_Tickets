@@ -1,29 +1,27 @@
 ﻿using MediatR;
-using Shared.DTOs.SubtitleTables;
+using Shared.DTOs.TimeSlot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Website_Selling_Movie_Tickets.Application.Common.Interfaces;
-using Website_Selling_Movie_Tickets.Domain.Entities;
 
-namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetSubtitleTable
+namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetListTimeSlot
 {
-    public class GetSubtitleTableQueryHandler : IRequestHandler<GetSubtitleTableQuery, List<SubtitleTablesModel>>
+    public class GetListTimeSlotQueryHandler : IRequestHandler<GetListTimeSlotQuery, List<ListTimeSlotModel>>
     {
         private readonly IMoviesRepository _moviesRepository;
 
-        public GetSubtitleTableQueryHandler(IMoviesRepository moviesRepository)
+        public GetListTimeSlotQueryHandler(IMoviesRepository moviesRepository)
         {
             _moviesRepository = moviesRepository;
         }
-
-        public async Task<List<SubtitleTablesModel>> Handle(GetSubtitleTableQuery request, CancellationToken cancellationToken)
+        public async Task<List<ListTimeSlotModel>> Handle(GetListTimeSlotQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _moviesRepository.GetSubtitleTables(request.Id);
+                var result = await _moviesRepository.GetTimeSlot(request.movie_Id);
                 if (result == null)
                 {
                     throw new Exception("Data not found");

@@ -32,8 +32,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Upd
             {
                 throw new Exception("Id not found");
             }
-
-            query.Date = request.Date;
+            query.Address = request.Address;
 
             try
             {
