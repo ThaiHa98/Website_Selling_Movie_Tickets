@@ -21,6 +21,7 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public int Seat_Id { get; set; }
         public string SeatNumber { get; set; }
         public int SubtitleTable_Id { get; set; }
+        public DateTime ShowTime { get; set; }
         public StatusTicket Status {  get; set; }
     }
 }

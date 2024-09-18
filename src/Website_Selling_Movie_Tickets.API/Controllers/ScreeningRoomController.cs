@@ -124,12 +124,15 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
 
         #region GetAll
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAllScreeningRoom()
+        public async Task<IActionResult> GetAllScreeningRoom(int moive_Id)
         {
             try
             {
                 _logger.Information($"Begin {Methord} GetAllScreeningRoom");
-                var request = new GetAllScreeningRoomQuery();
+                var request = new GetAllScreeningRoomQuery
+                {
+                    movie_Id = moive_Id
+                };
                 var result = await _mediator.Send(request);
                 _logger.Information($"End {Methord} GetAllScreeningRoom reponse: {JsonConvert.SerializeObject(result)}");
                 return Ok(new ApiResultBase

@@ -19,6 +19,7 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public string Director { get; set; } //Đạo diễn
         public string Actors { get; set; } // danh sách diễn viên
         public string TheatersIds { get; set; }
+        public int ScreeningRoom_Id { get; set; }
         public StatusMovie Status { get; set; }
 
         public List<string> GetActorList()

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Shared.DTOs.TimeSlot;
+using Shared.DTOs.SubtitleTableTimeSlots;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using Website_Selling_Movie_Tickets.Application.Common.Interfaces;
 
 namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetListTimeSlot
 {
-    public class GetListTimeSlotQueryHandler : IRequestHandler<GetListTimeSlotQuery, List<ListTimeSlotModel>>
+    public class GetListTimeSlotQueryHandler : IRequestHandler<GetListTimeSlotQuery, List<SubtitleTableTimeSlotsModel>>
     {
         private readonly IMoviesRepository _moviesRepository;
 
@@ -17,11 +17,11 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Queries.GetL
         {
             _moviesRepository = moviesRepository;
         }
-        public async Task<List<ListTimeSlotModel>> Handle(GetListTimeSlotQuery request, CancellationToken cancellationToken)
+        public async Task<List<SubtitleTableTimeSlotsModel>> Handle(GetListTimeSlotQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _moviesRepository.GetTimeSlot(request.movie_Id);
+                var result = await _moviesRepository.GetTimeSlot(request.movie_Id,request.nameSubtitleTable);
                 if (result == null)
                 {
                     throw new Exception("Data not found");

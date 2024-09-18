@@ -589,14 +589,15 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
 
         #region GetTimeSlot
         [HttpGet("GetTimeSlot")]
-        public async Task<IActionResult> GetTimeSlot(int movie_id)
+        public async Task<IActionResult> GetTimeSlot(int movie_id, string nameSubtitleTable)
         {
             try
             {
                 _logger.Information($"Begin {Methods} GetTimeSlot");
                 var response = new GetListTimeSlotQuery
                 {
-                    movie_Id = movie_id
+                    movie_Id = movie_id,
+                    nameSubtitleTable = nameSubtitleTable
                 };
                 var result = await _mediator.Send(response);
                 _logger.Information($"End {Methods} GetTimeSlot reponse: {JsonConvert.SerializeObject(result)}");

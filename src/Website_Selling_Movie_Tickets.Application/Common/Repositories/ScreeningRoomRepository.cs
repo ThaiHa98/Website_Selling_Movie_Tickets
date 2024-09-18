@@ -62,9 +62,31 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             }
         }
 
-        public async Task<List<ScreeningRoom>> GetAll()
+        public async Task<List<ScreeningRoom>> GetAll(int movie_Id)
         {
-            return await _dbContext.ScreeningRooms.ToListAsync();
+            try
+            {
+                // Tìm movie theo movie_Id
+                var movie = _dbContext.Movies.FirstOrDefault(x => x.Id == movie_Id);
+                if (movie == null)
+                {
+                    throw new Exception("Movie_Id not found");
+                }
+
+                // Lấy ScreeningRoom_Id từ movie tìm được
+                var screeningRoomId = movie.ScreeningRoom_Id;
+
+                // Tìm ScreeningRoom tương ứng với ScreeningRoom_Id
+                var screeningRooms = _dbContext.ScreeningRooms
+                    .Where(sr => sr.Id == screeningRoomId)
+                    .ToList();
+
+                return screeningRooms;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving screening rooms: {ex.Message}");
+            }
         }
 
         public async Task<Response<ScreeningRoom>> GetById(int Id)

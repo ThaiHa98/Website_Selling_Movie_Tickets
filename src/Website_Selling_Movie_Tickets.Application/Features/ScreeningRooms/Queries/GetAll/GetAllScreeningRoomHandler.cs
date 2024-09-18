@@ -18,7 +18,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.ScreeningRooms.Quer
         }
         public async Task<List<ScreeningRoom>> Handle(GetAllScreeningRoomQuery request, CancellationToken cancellationToken)
         {
-            var screeningRoom = await _screeningRoomRepository.GetAll();
+            var screeningRoom = await _screeningRoomRepository.GetAll(request.movie_Id);
             return screeningRoom;
         }
     }

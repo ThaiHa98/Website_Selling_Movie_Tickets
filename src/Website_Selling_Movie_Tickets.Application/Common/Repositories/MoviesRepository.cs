@@ -8,8 +8,8 @@ using Shared.DTOs.Booking;
 using Shared.DTOs.MoviesView;
 using Shared.DTOs.SearchStatusMovies;
 using Shared.DTOs.SubtitleTables;
+using Shared.DTOs.SubtitleTableTimeSlots;
 using Shared.DTOs.Theater;
-using Shared.DTOs.TimeSlot;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -793,7 +793,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                                          SubtitleTable_Id = subtitleTable.Id,
                                          SubtitleTable_Name = subtitleTable.Name,
                                          TimeSlots = timeSlots
-                                             .Select(ts => new TimeSlotModel
+                                             .Select(ts => new Shared.DTOs.Booking.TimeSlotModel
                                              {
                                                  Id = ts.Id,
                                                  StartTime = ts.StartTime
@@ -831,7 +831,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             }
         }
 
-        public async Task<List<ListTimeSlotModel>> GetTimeSlot(int movieId)
+        public async Task<List<SubtitleTableTimeSlotsModel>> GetTimeSlot(int movieId, string nameSubtitleTable)
         {
             try
             {
@@ -846,7 +846,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 
                 if (movie == null || string.IsNullOrEmpty(movie.TheatersIds))
                 {
-                    return new List<ListTimeSlotModel>(); // Trả về danh sách trống nếu phim không tồn tại hoặc không có thông tin rạp
+                    return new List<SubtitleTableTimeSlotsModel>(); // Trả về danh sách trống nếu phim không tồn tại hoặc không có thông tin rạp
                 }
 
                 // Lấy danh sách các ID rạp từ TheatersIds
@@ -859,7 +859,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 
                 if (!theaterIds.Any())
                 {
-                    return new List<ListTimeSlotModel>(); // Trả về danh sách trống nếu không có ID rạp hợp lệ
+                    return new List<SubtitleTableTimeSlotsModel>(); // Trả về danh sách trống nếu không có ID rạp hợp lệ
                 }
 
                 // Lấy danh sách Theaters dựa trên danh sách các ID rạp
@@ -875,13 +875,18 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 
                 if (!subtitleTableIds.Any())
                 {
-                    return new List<ListTimeSlotModel>(); // Trả về danh sách trống nếu không có SubtitleTable_Id hợp lệ
+                    return new List<SubtitleTableTimeSlotsModel>(); // Trả về danh sách trống nếu không có SubtitleTable_Id hợp lệ
                 }
 
-                // Lấy danh sách SubtitleTables dựa trên danh sách subtitleTableIds
+                // Lấy danh sách SubtitleTables dựa trên danh sách subtitleTableIds và điều kiện Name_SubtitleTable
                 var subtitleTables = await _dbContext.SubtitleTables
-                    .Where(st => subtitleTableIds.Contains(st.Id.ToString()))
+                    .Where(st => subtitleTableIds.Contains(st.Id.ToString()) && st.Name == nameSubtitleTable)
                     .ToListAsync();
+
+                if (!subtitleTables.Any())
+                {
+                    return new List<SubtitleTableTimeSlotsModel>(); // Trả về danh sách trống nếu không tìm thấy SubtitleTable phù hợp
+                }
 
                 // Tách TimeSlotIds từ SubtitleTables
                 var subtitleTableTimeSlotIds = subtitleTables
@@ -905,7 +910,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 
                 if (!timeSlotIds.Any())
                 {
-                    return new List<ListTimeSlotModel>(); // Trả về danh sách trống nếu không có TimeSlot_Id hợp lệ
+                    return new List<SubtitleTableTimeSlotsModel>(); // Trả về danh sách trống nếu không có TimeSlot_Id hợp lệ
                 }
 
                 // Lấy danh sách TimeSlots dựa trên danh sách timeSlotIds
@@ -913,21 +918,25 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                     .Where(ts => timeSlotIds.Contains(ts.Id))
                     .ToListAsync();
 
-                // Ánh xạ dữ liệu từ SubtitleTables và TimeSlots sang ListTimeSlotModel
-                var result = subtitleTableTimeSlotIds
-                    .SelectMany(st => timeSlots
-                        .Where(ts => st.TimeSlotIds.Contains(ts.Id))
-                        .Select(ts => new ListTimeSlotModel
-                        {
-                            Id = ts.Id,
-                            Name_SubtitleTable = st.Name,
-                            StartTime = ts.StartTime,
-                            EndTime = ts.EndTime,
-                            Date = ts.Date,
-                        }))
+                // Nhóm TimeSlots theo Name_SubtitleTable
+                var groupedTimeSlots = subtitleTableTimeSlotIds
+                    .Select(st => new SubtitleTableTimeSlotsModel
+                    {
+                        Name_SubtitleTable = st.Name,
+                        TimeSlots = timeSlots
+                            .Where(ts => st.TimeSlotIds.Contains(ts.Id))
+                            .Select(ts => new Shared.DTOs.SubtitleTableTimeSlots.TimeSlotModel
+                            {
+                                Id = ts.Id,
+                                StartTime = ts.StartTime,
+                                EndTime = ts.EndTime,
+                                Date = ts.Date,
+                            })
+                            .ToList()
+                    })
                     .ToList();
 
-                return result;
+                return groupedTimeSlots;
             }
             catch (Exception ex)
             {

@@ -10,6 +10,6 @@ namespace Website_Selling_Movie_Tickets.Application.Features.ScreeningRooms.Quer
 {
     public class GetAllScreeningRoomQuery : IRequest<List<ScreeningRoom>>
     {
-        public GetAllScreeningRoomQuery() { }
+        public int movie_Id { get; set; }
     }
 }

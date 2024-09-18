@@ -23,6 +23,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
         public string Director { get; set; }
         public List<string> Actor { get; set; }
         public List<int> TheatersIds { get; set; }
+        public int ScreeningRoom_Id { get; set; }
         public StatusMovie Status { get; set; }
 
     }

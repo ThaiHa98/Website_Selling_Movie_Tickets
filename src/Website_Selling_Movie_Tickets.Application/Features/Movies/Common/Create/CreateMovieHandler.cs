@@ -37,6 +37,11 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
         {
             try
             {
+                var screeningRoom = _dbContext.ScreeningRooms.FirstOrDefault(x => x.Id == request.ScreeningRoom_Id);
+                if (screeningRoom == null) 
+                {
+                    throw new ArgumentException("screeningRoom Id not found", nameof(request.ScreeningRoom_Id));
+                }
                 var genre = _dbContext.Genres.FirstOrDefault(x => x.Id == request.GenreId);
                 if (genre == null)
                 {
@@ -69,6 +74,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Movies.Common.Creat
                     Actors = string.Join(", ", request.Actor),
                     TheatersIds = string.Join(", ", TheatersId),
                     Status = request.Status,
+                    ScreeningRoom_Id = screeningRoom.Id,
                 };
 
                 var response = await _moviesRepository.Create(movie);

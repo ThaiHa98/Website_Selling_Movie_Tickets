@@ -5,7 +5,7 @@ using Shared.DTOs.Booking;
 using Shared.DTOs.MoviesView;
 using Shared.DTOs.SearchStatusMovies;
 using Shared.DTOs.SubtitleTables;
-using Shared.DTOs.TimeSlot;
+using Shared.DTOs.SubtitleTableTimeSlots;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -34,6 +34,6 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
         Task<List<SubtitleTablesModel>> GetSubtitleTables(int movieId);
         Task<List<BookingModel>> GetBooking(int movie_Id, string theater_Address, int subtitleTable_Id);
         Task<string> LoadUserImage(int id);
-        Task<List<ListTimeSlotModel>> GetTimeSlot(int movieId);
+        Task<List<SubtitleTableTimeSlotsModel>> GetTimeSlot(int movieId, string nameSubtitleTable);
     }
 }
