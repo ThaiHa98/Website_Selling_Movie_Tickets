@@ -63,6 +63,11 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
                 {
                     throw new Exception("SubtitleTable_Id not found");
                 }
+                var popcornandDrinks = _dbContext.PopcornandDrinks.FirstOrDefault(x => x.Id == request.PopcornandDrinks_Id);
+                if(popcornandDrinks == null)
+                {
+                    throw new Exception("popcornandDrinks_Id not found");
+                }
 
                 var tickets = new List<Ticket>();
                 foreach (var seatId in seatIds)
@@ -87,6 +92,8 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
                         Theaters_Id = theaters.Id,
                         SeatNumber = seat.Number,
                         SubtitleTable_Id = subtitleTable.Id,
+                        PopcornandDrinks_Id = popcornandDrinks.Id,
+                        PopcornandDrinks_Quantity = popcornandDrinks.Quantity,
                         Status = StatusTicket.Paid
                     };
 

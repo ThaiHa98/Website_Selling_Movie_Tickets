@@ -11,7 +11,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
 {
     public class DBContext : DbContext
     {
-        public DBContext(DbContextOptions<DBContext> options) : base(options) 
+        public DBContext(DbContextOptions<DBContext> options) : base(options)
         {
         }
         public virtual DbSet<User> Users { get; set; }
@@ -25,6 +25,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
         public virtual DbSet<ScreeningRoom> ScreeningRooms { get; set; }
         public virtual DbSet<SubtitleTable> SubtitleTables { get; set; }
         public virtual DbSet<Seat> Seats { get; set; }
+        public virtual DbSet<PopcornandDrinks> PopcornandDrinks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,6 +36,14 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
             modelBuilder.Entity<Ticket>()
                 .Property(x => x.Status)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<Ticket>()
+                .Property(x => x.ToatalPrice)
+                .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<Ticket>()
+                .Property(x => x.PopcornandDrinks_Price)
+                .HasColumnType("decimal(18, 2)");
 
             modelBuilder.Entity<ChairType>()
                 .Property(x => x.Price)
@@ -61,8 +70,17 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
                 .HasConversion<string>();
 
             modelBuilder.Entity<SubtitleTable>()
-                .Ignore(e => e.TimeSlot_Id) // Bỏ qua TimeSlot_Ids trong database
-                .Property(e => e.TimeSlot_Id); // Ánh xạ TimeSlot_Ids_String vào cột trong database
+                .Ignore(e => e.TimeSlot_Id)
+                .Property(e => e.TimeSlot_Id);
+
+            modelBuilder.Entity<PopcornandDrinks>()
+                .Property(x => x.Description)
+                .HasMaxLength(500)
+                .IsRequired();
+
+            modelBuilder.Entity<PopcornandDrinks>()
+                .Property(x => x.Price)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }

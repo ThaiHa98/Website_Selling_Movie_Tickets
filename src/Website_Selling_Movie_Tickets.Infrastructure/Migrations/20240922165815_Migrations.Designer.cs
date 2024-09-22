@@ -12,7 +12,7 @@ using Website_Selling_Movie_Tickets.Infrastructure.Persistence;
 namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20240815173407_Migrations")]
+    [Migration("20240922165815_Migrations")]
     partial class Migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,6 +107,9 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ScreeningRoom_Id")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -118,6 +121,34 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
+                });
+
+            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.PopcornandDrinks", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PopcornandDrinks");
                 });
 
             modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.ScreeningRoom", b =>
@@ -261,6 +292,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ScreeningRoom_Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SubtitleTable_Id")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -278,10 +313,16 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.Property<int>("ChairType_Id")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("ChairType_Price")
+                    b.Property<int>("Movies_Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PopcornandDrinks_Id")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PopcornandDrinks_Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Movies_Id")
+                    b.Property<int>("PopcornandDrinks_Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("ScreeningRoom_Id")
@@ -293,6 +334,9 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 
                     b.Property<int>("Seat_Id")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("ShowTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -306,6 +350,9 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 
                     b.Property<int>("TimeSlot_Id")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("ToatalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("User_Id")
                         .HasColumnType("int");
