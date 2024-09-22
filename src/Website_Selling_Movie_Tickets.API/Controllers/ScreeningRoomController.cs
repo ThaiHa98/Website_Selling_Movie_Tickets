@@ -123,15 +123,15 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
         #endregion
 
         #region GetAll
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAllScreeningRoom(int moive_Id)
+        [HttpGet("GetScreeningRoomMovieId")]
+        public async Task<IActionResult> GetAllScreeningRoom(int movie_Id)
         {
             try
             {
                 _logger.Information($"Begin {Methord} GetAllScreeningRoom");
                 var request = new GetAllScreeningRoomQuery
                 {
-                    movie_Id = moive_Id
+                    movie_Id = movie_Id
                 };
                 var result = await _mediator.Send(request);
                 _logger.Information($"End {Methord} GetAllScreeningRoom reponse: {JsonConvert.SerializeObject(result)}");
@@ -140,7 +140,7 @@ namespace Website_Selling_Movie_Tickets.API.Controllers
                     data = result,
                     success = true,
                     httpStatusCode = (int)HttpStatusCode.OK,
-                    totalCount = result.Count,
+                    totalCount = result.Id,
                     message = "Result"
                 });
             }

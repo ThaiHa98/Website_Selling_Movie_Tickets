@@ -1,4 +1,5 @@
 ﻿using Shared.DTOs.Actor;
+using Shared.DTOs.ScreeningRoom;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Interfaces
 {
     public interface IScreeningRoomRepository
     {
-        Task<List<ScreeningRoom>> GetAll(int movie_Id);
+        Task<ScreeningRoomModeSeatl> GetAllScreeningMovieId(int movie_Id);
         Task<Pagination<ScreeningRoom>> GetPagination(int pageIndex, int pageSize);
         Task<Response<ScreeningRoom>> GetById(int Id);
         Task<Response<ScreeningRoomModel>> AddAsync(ScreeningRoomModel entity);

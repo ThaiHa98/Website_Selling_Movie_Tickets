@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Shared.DTOs.Actor;
+using Shared.DTOs.ScreeningRoom;
 using Shared.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -62,32 +63,60 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             }
         }
 
-        public async Task<List<ScreeningRoom>> GetAll(int movie_Id)
+        public async Task<ScreeningRoomModeSeatl> GetAllScreeningMovieId(int movie_Id)
         {
             try
             {
-                // Tìm movie theo movie_Id
+                // Lấy movie theo movie_Id
                 var movie = _dbContext.Movies.FirstOrDefault(x => x.Id == movie_Id);
                 if (movie == null)
                 {
                     throw new Exception("Movie_Id not found");
                 }
 
-                // Lấy ScreeningRoom_Id từ movie tìm được
+                // Lấy ScreeningRoom_Id từ movie
                 var screeningRoomId = movie.ScreeningRoom_Id;
 
-                // Tìm ScreeningRoom tương ứng với ScreeningRoom_Id
-                var screeningRooms = _dbContext.ScreeningRooms
-                    .Where(sr => sr.Id == screeningRoomId)
-                    .ToList();
+                // Lấy thông tin ScreeningRoom
+                var screeningRoom = _dbContext.ScreeningRooms.FirstOrDefault(sr => sr.Id == screeningRoomId);
+                if (screeningRoom == null)
+                {
+                    throw new Exception("ScreeningRoom not found");
+                }
 
-                return screeningRooms;
+                // Lấy danh sách các ghế thuộc ScreeningRoom_Id
+                var domainSeats = _dbContext.Seats.Where(seat => seat.ScreeningRoom_Id == screeningRoomId).ToList();
+
+                // Ánh xạ từ Domain.Seat sang DTO.Seat
+                var dtoSeats = domainSeats.Select(seat => new Shared.DTOs.ScreeningRoom.Seat
+                {
+                    Id = seat.Id,
+                    ScreeningRoom_Id = seat.ScreeningRoom_Id,
+                    ChairType_Id = seat.ChairType_Id,
+                    Row = seat.Row,
+                    Number = seat.Number
+                }).ToList();
+
+                // Tạo đối tượng ScreeningRoomModeSeatl
+                var screeningRoomWithSeats = new ScreeningRoomModeSeatl
+                {
+                    Id = screeningRoom.Id,
+                    Name = screeningRoom.Name,
+                    Numberofseats = screeningRoom.Numberofseats,
+                    NumberOfRegularSeat = screeningRoom.NumberOfRegularSeat,
+                    NumberOfVIPSeat = screeningRoom.NumberOfVIPSeat,
+                    NumberOfLoveBoxes = screeningRoom.NumberOfLoveBoxes,
+                    Seats = dtoSeats // Gán danh sách ghế đã ánh xạ
+                };
+
+                return screeningRoomWithSeats;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error retrieving screening rooms: {ex.Message}");
+                throw new Exception($"Error retrieving screening room and seats: {ex.Message}");
             }
         }
+
 
         public async Task<Response<ScreeningRoom>> GetById(int Id)
         {
