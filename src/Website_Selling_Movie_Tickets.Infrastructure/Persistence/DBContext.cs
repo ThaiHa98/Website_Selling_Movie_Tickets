@@ -25,7 +25,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
         public virtual DbSet<ScreeningRoom> ScreeningRooms { get; set; }
         public virtual DbSet<SubtitleTable> SubtitleTables { get; set; }
         public virtual DbSet<Seat> Seats { get; set; }
-        public virtual DbSet<PopcornandDrinks> PopcornandDrinks { get; set; }
+        public virtual DbSet<PopcornandDrink> PopcornandDrinks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,12 +73,12 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Persistence
                 .Ignore(e => e.TimeSlot_Id)
                 .Property(e => e.TimeSlot_Id);
 
-            modelBuilder.Entity<PopcornandDrinks>()
+            modelBuilder.Entity<PopcornandDrink>()
                 .Property(x => x.Description)
                 .HasMaxLength(500)
                 .IsRequired();
 
-            modelBuilder.Entity<PopcornandDrinks>()
+            modelBuilder.Entity<PopcornandDrink>()
                 .Property(x => x.Price)
                 .HasColumnType("decimal(18,2)");
         }

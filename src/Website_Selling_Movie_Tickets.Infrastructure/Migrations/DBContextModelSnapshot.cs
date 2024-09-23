@@ -121,7 +121,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.PopcornandDrinks", b =>
+            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.PopcornandDrink", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -133,6 +133,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

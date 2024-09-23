@@ -42,6 +42,7 @@ namespace Website_Selling_Movie_Tickets.Application
                     .AddValidatorsFromAssemblyContaining<CreateSlidesRequestValidator>()
                     .AddValidatorsFromAssemblyContaining<CreateSubtitleTableRequestValidator>()
                     .AddTransient<ISubtitleTableRepository, SubtitleTableRepository>()
-                    .AddTransient<ISeatRepository, SeatRepository>();
+                    .AddTransient<ISeatRepository, SeatRepository>()
+                    .AddTransient<IPopcornandDrinksRepository, PopcornandDrinksRepository>();
     }
 }

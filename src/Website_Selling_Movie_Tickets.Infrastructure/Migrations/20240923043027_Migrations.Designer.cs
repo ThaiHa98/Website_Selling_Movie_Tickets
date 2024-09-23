@@ -12,7 +12,7 @@ using Website_Selling_Movie_Tickets.Infrastructure.Persistence;
 namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20240922165815_Migrations")]
+    [Migration("20240923043027_Migrations")]
     partial class Migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,7 +123,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.PopcornandDrinks", b =>
+            modelBuilder.Entity("Website_Selling_Movie_Tickets.Domain.Entities.PopcornandDrink", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -135,6 +135,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

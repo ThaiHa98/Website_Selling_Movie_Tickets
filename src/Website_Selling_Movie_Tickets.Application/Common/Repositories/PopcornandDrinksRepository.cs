@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Shared.DTOs.PopcornandDrinks;
 using Shared.SeedWork;
 using System;
@@ -9,23 +11,26 @@ using System.Threading.Tasks;
 using Website_Selling_Movie_Tickets.Application.Common.Interfaces;
 using Website_Selling_Movie_Tickets.Domain.Entities;
 using Website_Selling_Movie_Tickets.Infrastructure.Persistence;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
 {
     public class PopcornandDrinksRepository : IPopcornandDrinksRepository
     {
         private readonly DBContext _dBContext;
-        public PopcornandDrinksRepository(DBContext dbContext)
+        private readonly IConfiguration _configuration;
+        public PopcornandDrinksRepository(DBContext dbContext,IConfiguration configuration)
         {
             _dBContext = dbContext;
+            _configuration = configuration;
         }
-        public async Task<Response<PopcornandDrinks>> AddAsync(PopcornandDrinks popcornandDrinks)
+        public async Task<Response<PopcornandDrink>> AddAsync(PopcornandDrink popcornandDrinks)
         {
             _dBContext.PopcornandDrinks.Add(popcornandDrinks);
             var result = await _dBContext.SaveChangesAsync();
             if (result > 0)
             {
-                return new Response<PopcornandDrinks>
+                return new Response<PopcornandDrink>
                 {
                     Success = true,
                     Data = popcornandDrinks,
@@ -34,7 +39,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             }
             else
             {
-                return new Response<PopcornandDrinks>
+                return new Response<PopcornandDrink>
                 {
                     Success = false,
                     Message = "Failed to add popcornandDrinks"
@@ -54,19 +59,19 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             return result > 0;
         }
 
-        public async Task<Response<List<PopcornandDrinks>>> GetAllAsync()
+        public async Task<Response<List<PopcornandDrink>>> GetAllAsync()
         {
             var result = await _dBContext.PopcornandDrinks.ToListAsync();
             if (!result.Any())
             {
-                return new Response<List<PopcornandDrinks>>
+                return new Response<List<PopcornandDrink>>
                 {
                     Success = false,
                     Data = null,
                     Message = "No Popcorn and Drinks found."
                 };
             }
-            return new Response<List<PopcornandDrinks>>
+            return new Response<List<PopcornandDrink>>
             {
                 Success = true,
                 Data = result,
@@ -74,19 +79,19 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             };
         }
 
-        public async Task<Response<PopcornandDrinks>> GetById(int id)
+        public async Task<Response<PopcornandDrink>> GetById(int id)
         {
             var result = await _dBContext.PopcornandDrinks.FirstOrDefaultAsync(x => x.Id == id);
             if(result == null)
             {
-                return new Response<PopcornandDrinks>
+                return new Response<PopcornandDrink>
                 {
                     Success = false,
                     Data = null,
                     Message = "Popcorn and Drink not found."
                 };
             }
-            return new Response<PopcornandDrinks>
+            return new Response<PopcornandDrink>
             {
                 Success = true,
                 Data = result,
@@ -94,13 +99,13 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             };
         }
 
-        public async Task<Response<Pagination<PopcornandDrinks>>> GetAllAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
+        public async Task<Response<Pagination<PopcornandDrink>>> GetAllAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
         {
             try
             {
                 if (pageIndex < 1 || pageSize < 1)
                 {
-                    return new Response<Pagination<PopcornandDrinks>>
+                    return new Response<Pagination<PopcornandDrink>>
                     {
                         Data = null,
                         Success = false,
@@ -114,9 +119,9 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
                     .Take(pageSize)
                     .ToListAsync(cancellationToken);
 
-                var pagination = new Pagination<PopcornandDrinks>(pageIndex, pageSize, totalRecords, items);
+                var pagination = new Pagination<PopcornandDrink>(pageIndex, pageSize, totalRecords, items);
 
-                return new Response<Pagination<PopcornandDrinks>>
+                return new Response<Pagination<PopcornandDrink>>
                 {
                     Data = pagination,
                     Success = true,
@@ -125,7 +130,7 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             }
             catch (Exception ex)
             {
-                return new Response<Pagination<PopcornandDrinks>>
+                return new Response<Pagination<PopcornandDrink>>
                 {
                     Data = null,
                     Success = false,
@@ -143,7 +148,48 @@ namespace Website_Selling_Movie_Tickets.Application.Common.Repositories
             }
             query.Id = popcornandDrinksModel.Id;
             query.Price = popcornandDrinksModel.Price;
+            await _dBContext.SaveChangesAsync();
             return "Update Successfully";
+        }
+
+        public async Task<byte[]> GetPopcornandDrinkImageBytes(int id)
+        {
+            try
+            {
+                var popcornandDrinks = await _dBContext.PopcornandDrinks
+                    .Where(x => x.Id == id)
+                    .Select(x => new
+                    {
+                        x.Image
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (popcornandDrinks == null)
+                {
+                    throw new Exception($"Không tìm thấy bộ phim nào với ID {id}");
+                }
+
+                var baseFolder = _configuration.GetValue<string>("BaseAddress");
+
+                if (string.IsNullOrEmpty(baseFolder))
+                {
+                    throw new Exception("Cấu hình BaseAddress không hợp lệ hoặc thiếu.");
+                }
+
+                var baseFolderLocal = new Uri(baseFolder).LocalPath;
+                var completeFilePath = Path.Combine(baseFolderLocal, popcornandDrinks.Image);
+
+                if (!System.IO.File.Exists(completeFilePath))
+                {
+                    throw new Exception($"Không tìm thấy tệp tại đường dẫn: {completeFilePath}");
+                }
+
+                return await System.IO.File.ReadAllBytesAsync(completeFilePath);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Đã xảy ra lỗi khi lấy thông tin hình ảnh của bộ phim.", ex);
+            }
         }
     }
 }
