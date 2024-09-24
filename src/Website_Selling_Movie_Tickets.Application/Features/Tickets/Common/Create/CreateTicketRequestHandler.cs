@@ -26,58 +26,59 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
         {
             try
             {
-                List<int> seatIds = request.Seat_Id;
+                List<string> seatIds = request.Seat; // Nhận danh sách ghế từ yêu cầu
 
                 var user = _dbContext.Users.FirstOrDefault(x => x.Id == request.User_Id);
-                if (user == null)
-                {
-                    throw new Exception("UserId not found");
-                }
+                if (user == null) throw new Exception("UserId not found");
+
                 var movie = _dbContext.Movies.FirstOrDefault(x => x.Id == request.Movies_Id);
-                if (movie == null)
-                {
-                    throw new Exception("MovieId not found");
-                }
+                if (movie == null) throw new Exception("MovieId not found");
+
                 var timeSlot = _dbContext.TimeSlots.FirstOrDefault(x => x.Id == request.TimeSlot_Id);
-                if (timeSlot == null)
-                {
-                    throw new Exception("TimeSlotId not found");
-                }
+                if (timeSlot == null) throw new Exception("TimeSlotId not found");
+
                 var chairType = _dbContext.ChairTypes.FirstOrDefault(x => x.Id == request.ChairType_Id);
-                if (chairType == null)
-                {
-                    throw new Exception("ChairType_Id not found");
-                }
+                if (chairType == null) throw new Exception("ChairType_Id not found");
+
                 var screeningRoom = _dbContext.ScreeningRooms.FirstOrDefault(x => x.Id == request.ScreeningRoom_Id);
-                if (screeningRoom == null)
-                {
-                    throw new Exception("ScreeningRoom_Id not found");
-                }
+                if (screeningRoom == null) throw new Exception("ScreeningRoom_Id not found");
+
                 var theaters = _dbContext.Theaters.FirstOrDefault(x => x.Id == request.Theaters_Id);
-                if (theaters == null)
-                {
-                    throw new Exception("Theaters_Id not found");
-                }
+                if (theaters == null) throw new Exception("Theaters_Id not found");
+
                 var subtitleTable = _dbContext.SubtitleTables.FirstOrDefault(x => x.Id == request.SubtitleTable_Id);
-                if (subtitleTable == null)
-                {
-                    throw new Exception("SubtitleTable_Id not found");
-                }
-                var popcornandDrinks = _dbContext.PopcornandDrinks.FirstOrDefault(x => x.Id == request.PopcornandDrinks_Id);
-                if(popcornandDrinks == null)
-                {
-                    throw new Exception("popcornandDrinks_Id not found");
-                }
+                if (subtitleTable == null) throw new Exception("SubtitleTable_Id not found");
 
                 var tickets = new List<Ticket>();
-                foreach (var seatId in seatIds)
+
+                // Kiểm tra số lượng ghế và đồ uống/bỏng ngô
+                if (request.PopcornandDrinks_Id.Count != request.PopcornandDrinks_Quantity.Count ||
+                    request.PopcornandDrinks_Id.Count != seatIds.Count)
                 {
-                    var seat = _dbContext.Seats.FirstOrDefault(x => x.Id == seatId);
-                    if (seat == null)
+                    throw new Exception("Mismatched counts of seat IDs and popcorn/drink selections.");
+                }
+
+                for (int i = 0; i < seatIds.Count; i++)
+                {
+                    var seatId = seatIds[i];
+
+                    // Tính giá vé cho ghế
+                    decimal ticketPrice = CalculateTicketPrice(seatId);
+
+                    // Tính tổng giá cho popcorn và drinks
+                    decimal totalPopcornandDrinksPrice = 0;
+
+                    // Lặp qua các loại đồ uống/bỏng ngô
+                    for (int j = 0; j < request.PopcornandDrinks_Id.Count; j++)
                     {
-                        throw new Exception($"Seat_Id {seatId} not found");
+                        var popcornandDrink = _dbContext.PopcornandDrinks.FirstOrDefault(x => x.Id == request.PopcornandDrinks_Id[j]);
+                        if (popcornandDrink != null)
+                        {
+                            totalPopcornandDrinksPrice += popcornandDrink.Price * request.PopcornandDrinks_Quantity[j];
+                        }
                     }
 
+                    // Tạo vé
                     var ticket = new Ticket
                     {
                         Id = GenerateTicketId(),
@@ -85,27 +86,25 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
                         User_Name = user.Name,
                         Movies_Id = movie.Id,
                         TimeSlot_Id = timeSlot.Id,
-                        Seat_Id = seat.Id,
+                        Seat = seatId,
                         ChairType_Id = chairType.Id,
-                        ToatalPrice = CalculateTicketPrice(seatId),
                         ScreeningRoom_Id = screeningRoom.Id,
                         Theaters_Id = theaters.Id,
-                        SeatNumber = seat.Number,
                         SubtitleTable_Id = subtitleTable.Id,
-                        PopcornandDrinks_Id = popcornandDrinks.Id,
-                        PopcornandDrinks_Quantity = popcornandDrinks.Quantity,
+                        PopcornandDrinks_Id = request.PopcornandDrinks_Id[i],
+                        PopcornandDrinks_Quantity = request.PopcornandDrinks_Quantity[i],
+                        ToatalPricePopcornandDrinks = totalPopcornandDrinksPrice,
+                        ToatalPriceTicket = ticketPrice + totalPopcornandDrinksPrice, // Tổng tiền vé
                         Status = StatusTicket.Paid
                     };
 
                     tickets.Add(ticket);
                 }
 
-                // Lưu tất cả các vé
                 await _ticketService.AddAsync(tickets);
-
                 return new Response<Ticket>
                 {
-                    Data = tickets.FirstOrDefault(), // Trả về vé đầu tiên hoặc điều chỉnh nếu cần
+                    Data = tickets.FirstOrDefault(),
                     Success = true
                 };
             }
@@ -114,6 +113,7 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
                 throw new ApplicationException("An error occurred while creating Tickets", ex);
             }
         }
+
         // Tạo Id
         private string GenerateTicketId()
         {
@@ -126,13 +126,23 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
         }
 
         //Tính toán giá vé
-        private decimal CalculateTicketPrice(int seatId)
+        private decimal CalculateTicketPrice(string seatId)
         {
+            // Phân tích hàng và số ghế từ chuỗi seatId
+            char row = seatId[0]; // Lấy ký tự đầu tiên (hàng ghế)
+            int seatNumber;
+
+            // Kiểm tra xem phần còn lại của chuỗi có phải là số không
+            if (!int.TryParse(seatId.Substring(1), out seatNumber))
+            {
+                throw new Exception($"Invalid seat format: {seatId}");
+            }
+
             // Lấy thông tin ghế từ cơ sở dữ liệu
-            var seat = _dbContext.Seats.FirstOrDefault(x => x.Id == seatId);
+            var seat = _dbContext.Seats.FirstOrDefault(x => x.Row == row.ToString() && x.Number == seatNumber.ToString());
             if (seat == null)
             {
-                throw new Exception($"Seat_Id {seatId} not found");
+                throw new Exception($"Seat {seatId} not found");
             }
 
             // Lấy thông tin loại ghế từ cơ sở dữ liệu
@@ -144,6 +154,62 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
 
             // Trả về giá của loại ghế
             return chairType.Price;
+        }
+
+        public void IncreaseTheNumberOfPopcornandDrinks(string ticketId, int popcornandDrinkId, int increaseQuantity)
+        {
+            var ticket = _dbContext.Tickets.FirstOrDefault(x => x.Id == ticketId);
+            if (ticket == null)
+            {
+                throw new Exception("Ticket not found");
+            }
+
+            // Tìm loại đồ uống/bỏng ngô
+            var popcornandDrink = _dbContext.PopcornandDrinks.FirstOrDefault(x => x.Id == popcornandDrinkId);
+            if (popcornandDrink == null)
+            {
+                throw new Exception("Popcorn/Drink not found");
+            }
+
+            // Cập nhật số lượng và tổng giá
+            ticket.PopcornandDrinks_Quantity += increaseQuantity;
+            ticket.ToatalPricePopcornandDrinks = popcornandDrink.Price * ticket.PopcornandDrinks_Quantity;
+
+            // Cập nhật tổng giá vé
+            ticket.ToatalPriceTicket = CalculateTicketPrice(ticket.Seat) + ticket.ToatalPricePopcornandDrinks;
+
+            _dbContext.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
+        }
+
+        public void ReduceTheAmountOfPopcornandDrinks(string ticketId, int popcornandDrinkId, int reduceQuantity)
+        {
+            var ticket = _dbContext.Tickets.FirstOrDefault(x => x.Id == ticketId);
+            if (ticket == null)
+            {
+                throw new Exception("Ticket not found");
+            }
+
+            // Tìm loại đồ uống/bỏng ngô
+            var popcornandDrink = _dbContext.PopcornandDrinks.FirstOrDefault(x => x.Id == popcornandDrinkId);
+            if (popcornandDrink == null)
+            {
+                throw new Exception("Popcorn/Drink not found");
+            }
+
+            // Kiểm tra xem số lượng có thể giảm không
+            if (ticket.PopcornandDrinks_Quantity < reduceQuantity)
+            {
+                throw new Exception("Cannot reduce quantity more than available");
+            }
+
+            // Cập nhật số lượng và tổng giá
+            ticket.PopcornandDrinks_Quantity -= reduceQuantity;
+            ticket.ToatalPricePopcornandDrinks = popcornandDrink.Price * ticket.PopcornandDrinks_Quantity;
+
+            // Cập nhật tổng giá vé
+            ticket.ToatalPriceTicket = CalculateTicketPrice(ticket.Seat) + ticket.ToatalPricePopcornandDrinks;
+
+            _dbContext.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
         }
     }
 }

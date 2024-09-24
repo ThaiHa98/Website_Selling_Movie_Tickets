@@ -330,12 +330,13 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.Property<int>("ScreeningRoom_Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("SeatNumber")
+                    b.Property<string>("Seat")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Seat_Id")
-                        .HasColumnType("int");
+                    b.Property<string>("SeatNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ShowTime")
                         .HasColumnType("datetime2");
@@ -353,7 +354,10 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     b.Property<int>("TimeSlot_Id")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("ToatalPrice")
+                    b.Property<decimal>("ToatalPricePopcornandDrinks")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ToatalPriceTicket")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("User_Id")

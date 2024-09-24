@@ -21,11 +21,11 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Tickets.Common.Crea
         public int ChairType_Id { get; set; }
         public int ScreeningRoom_Id { get; set; }
         public int Theaters_Id { get; set; }
-        public List<int> Seat_Id { get; set; }
+        public List<string> Seat { get; set; }
         public string SeatNumber { get; set; }
         public int SubtitleTable_Id { get; set; }
-        public int PopcornandDrinks_Id { get; set; }
-        public int PopcornandDrinks_Quantity { get; set; }
+        public List<int> PopcornandDrinks_Id { get; set; }
+        public List<int> PopcornandDrinks_Quantity { get; set; }
         public DateTime ShowTime { get; set; }
         public StatusTicket Status { get; set; }
     }
