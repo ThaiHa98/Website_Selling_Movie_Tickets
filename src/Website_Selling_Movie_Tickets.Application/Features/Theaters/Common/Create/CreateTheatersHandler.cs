@@ -27,9 +27,19 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Cre
             try
             {
                 var subtitleTableIds = new List<int>();
+                var ScreeningRoom_Ids = new List<int>();
                 if (request == null)
                 {
                     throw new ArgumentNullException(nameof(request), "The request was not fully entered into the data fields");
+                }
+                foreach (var ScreeningRoom_Id in request.ScreeningRoom_Id)
+                {
+                    var ScreeningRoom = await _dbContext.ScreeningRooms.FirstOrDefaultAsync(x => x.Id == ScreeningRoom_Id);
+                    if(ScreeningRoom == null)
+                    {
+                        throw new Exception($"Id {ScreeningRoom_Id} not found");
+                    }
+                    ScreeningRoom_Ids.Add(ScreeningRoom.Id);
                 }
                 // Kiểm tra các TimeSlot_Id
                 foreach (var subtitleTableId in request.SubtitleTable_Id)
@@ -47,7 +57,8 @@ namespace Website_Selling_Movie_Tickets.Application.Features.Theaters.Common.Cre
                     Name = request.Name,
                     Address = request.Address,
                     Date = request.Date,
-                    SubtitleTable_Id = string.Join(",", subtitleTableIds)
+                    SubtitleTable_Id = string.Join(",", subtitleTableIds),
+                    ScreeningRoom_Id = string.Join(",", ScreeningRoom_Ids)
                 };
                 var response = await _theaterRepository.Create(theater);
 

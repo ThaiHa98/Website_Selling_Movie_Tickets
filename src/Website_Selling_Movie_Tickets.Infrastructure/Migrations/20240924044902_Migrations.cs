@@ -78,7 +78,7 @@ namespace Website_Selling_Movie_Tickets.Infrastructure.Migrations
                     table.PrimaryKey("PK_PopcornandDrinks", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            migrationBuilder.CreateTable( 
                 name: "ScreeningRooms",
                 columns: table => new
                 {

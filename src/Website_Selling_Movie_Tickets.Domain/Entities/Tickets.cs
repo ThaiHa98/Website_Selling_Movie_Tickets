@@ -20,10 +20,10 @@ namespace Website_Selling_Movie_Tickets.Domain.Entities
         public string Seat { get; set; }
         public string SeatNumber { get; set; }
         public int SubtitleTable_Id { get; set; }
-        public int PopcornandDrinks_Id { get; set; }
-        public int PopcornandDrinks_Quantity { get; set; }
-        public decimal PopcornandDrinks_Price { get; set; }
-        public decimal ToatalPricePopcornandDrinks {  get; set; }
+        public int? PopcornandDrinks_Id { get; set; }
+        public int? PopcornandDrinks_Quantity { get; set; }
+        public decimal? PopcornandDrinks_Price { get; set; }
+        public decimal? ToatalPricePopcornandDrinks {  get; set; }
         public decimal ToatalPriceTicket { get; set; }
         public DateTime ShowTime { get; set; }
         public StatusTicket Status {  get; set; }
